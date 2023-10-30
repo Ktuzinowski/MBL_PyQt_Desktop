@@ -1,15 +1,44 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
-def window():
-	# Based on OS getting application running
-	app = QApplication(sys.argv)
-	win = QMainWindow()
-	win.setGeometry(200, 200, 300, 300)
-	win.setWindowTitle("MBL PyQt")
+class Window(QWidget):
+   def __init__(self):
+      super(Window, self).__init__()
+      self.initUI()
 
-	win.show()
-	sys.exit(app.exec_())
+   def initUI(self):
+      hbox = QHBoxLayout(self)
 
-window()
+      leftFrame = QFrame()
+      leftFrame.setFrameShape(QFrame.StyledPanel)
+
+      middleFrame = QFrame()
+      middleFrame.setFrameShape(QFrame.StyledPanel)
+
+      rightFrame = QFrame()
+      rightFrame.setFrameShape(QFrame.StyledPanel)
+
+      splitter = QSplitter(Qt.Horizontal)
+      splitter.addWidget(leftFrame)
+      splitter.addWidget(middleFrame)
+      splitter.addWidget(rightFrame)
+      splitter.setSizes([300,800,300])
+
+      hbox.addWidget(splitter)
+
+      self.setLayout(hbox)
+      QApplication.setStyle(QStyleFactory.create('Cleanlooks'))
+
+      self.setGeometry(0,0, 800, 800)
+      self.setWindowTitle("MBL Visualizer")
+      self.show()
+      
+def main():
+   app = QApplication(sys.argv)
+   ex = Window()
+   sys.exit(app.exec_())
+   
+if __name__ == '__main__':
+   main()
