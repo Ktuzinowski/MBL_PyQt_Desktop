@@ -1,0 +1,35 @@
+{
+  "QMainWindow": [
+    {
+      "tittle": "MBL Visualizer",
+      "icon": ":/icons/icons/monitoring_FILL0_wght400_GRAD0_opsz24.svg",
+      "frameless": true,
+      "transluscentBg": true,
+      "sizeGrip": "size_grip",
+      "shadow": [
+        {
+          "color": "#000",
+          "blurRadius": 20,
+          "xOffset": 0,
+          "yOffset": 0,
+          "centralWidget": "centralwidget"
+        }
+      ],
+      "navigation": [
+        {
+          "minimize": "restore_window_button",
+          "close": "close_window_button",
+          "restore": [
+            {
+              "buttonName": "minimize_window_button",
+              "normalIcon": ":/icons/icons/fullscreen_FILL0_wght400_GRAD0_opsz24.svg",
+              "maximizedIcon": ":/icons/icons/fullscreen_exit_FILL0_wght400_GRAD0_opsz24.svg"
+            }
+          ],
+          "moveWindow": "header_frame",
+          "tittleBar": "header_frame"
+        }
+      ]
+    }
+  ]
+}
