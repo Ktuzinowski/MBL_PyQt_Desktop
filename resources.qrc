@@ -1,0 +1,46 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/science_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/remove_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/bar_chart_4_bars_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/pie_chart_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/device_thermostat_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/stacked_line_chart_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/code_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/bar_chart_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/monitoring_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/apps_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/arrow_forward_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/apps_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/arrow_forward_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/check_box_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/close_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/create_new_folder_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/dataset_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/done_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/downloading_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/expand_more_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/favorite_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/file_open_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/fullscreen_exit_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/fullscreen_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/grade_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/home_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/menu_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/refresh_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/search_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/settings_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/terminal_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/upload_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file>icons/zoom_in_FILL0_wght400_GRAD0_opsz24.svg</file>
+  </qresource>
+  <qresource prefix="fonts">
+    <file>fonts/TimesNewRoman/times.ttf</file>
+  </qresource>
+  <qresource prefix="images">
+    <file>images/wolf.png</file>
+    <file>images/wolf (1).png</file>
+  </qresource>
+</RCC>
