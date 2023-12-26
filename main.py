@@ -1,31 +1,18 @@
-import os
 import sys
-
-from PyQt5.QtWidgets import QMainWindow, QApplication
-from PyQt5.QtCore import QRect, QPropertyAnimation
-
-# IMPORT GUI FILE
-from ui_interface import *
-
-# IMPORT PYSIDE
-from PySide2.QtGui import QPainter
-from PySide2.QtCharts import QtCharts
-
-# Import Functool
-from functools import partial
-
+from PyQt5.QtWidgets import QMainWindow
+from myWidgets import SliderForProteinFrame
 from Custom_Widgets.Widgets import *
-
-import csv
-
+from globalobject import GlobalObject
 from ui_interface import *
 
 shadow_elements = {
     "frame_3",
     "frame_5",
-    "header_frame",
     "frame_8"
 }
+
+list_of_colors = ["blue", "red", "green", "orange", "yellow", "purple", "white", "pink", "brown"]
+
 
 # MAIN WINDOW CLASS
 class MainWindow(QMainWindow):
@@ -37,9 +24,6 @@ class MainWindow(QMainWindow):
         # Set Window Minimum Size
         self.setMinimumSize(850, 600)
         self.button_navigation()
-        self.setup_expand_and_open_for_menu()
-
-        loadJsonStyle(self, self.ui)
 
         for x in shadow_elements:
             # Shadow effect style
@@ -50,21 +34,35 @@ class MainWindow(QMainWindow):
             effect.setColor(QColor(0, 0, 0, 255))
             getattr(self.ui, x).setGraphicsEffect(effect)
 
-        # Manually Setup Navigation to Other Windows
-
-
+        GlobalObject().add_event_listener("NEW_DATA", self.update_interface_based_on_data)
         # SHOW WINDOW
         self.show()
 
-    def setup_expand_and_open_for_menu(self):
-        self.ui.open_close_side_bar_btn.clicked.connect(lambda: self.toggle_menu_left_widget())
-    def toggle_menu_left_widget(self):
-        print("CLICKING TOGGLE")
-        if self.ui.left_menu_frame.isHidden():
-            self.ui.left_menu_frame.show()
-            self.setMinimumSize(850, self.minimumHeight() + 1)
-        else:
-            self.ui.left_menu_frame.hide()
+    def update_interface_based_on_data(self):
+        data_frame = GlobalObject().data_frame
+
+        # Delete All Children Before Adding More
+        for i in reversed(range(self.ui.verticalLayout_19.count())):
+            self.ui.verticalLayout_19.itemAt(i).widget().setParent(None)
+
+        counter = 0
+        for column in data_frame.columns:
+            if column == "Areax":
+                continue
+            elif column == "AreaY":
+                continue
+            elif column == "LocalX":
+                continue
+            elif column == "LocalY":
+                continue
+            elif column == "GlobX":
+                continue
+            elif column == "GlobY":
+                continue
+            new_frame_for_slider = SliderForProteinFrame(self.ui.scrollAreaWidgetContents_3, data_frame.columns,
+                                                         list_of_colors[counter])
+            self.ui.verticalLayout_19.addWidget(new_frame_for_slider)
+            counter += 1
 
     def button_navigation(self):
         self.ui.percentage_bar_btn.clicked.connect(lambda: self.display(0))
@@ -72,6 +70,7 @@ class MainWindow(QMainWindow):
         self.ui.nested_donut_btn.clicked.connect(lambda: self.display(2))
         self.ui.line_chart_btn.clicked.connect(lambda: self.display(3))
         self.ui.bar_charts_btn.clicked.connect(lambda: self.display(4))
+
     def display(self, i):
         self.ui.stackedWidget.setCurrentIndex(i)
 
