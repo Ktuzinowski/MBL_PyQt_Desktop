@@ -1,17 +1,30 @@
+import functools
+
 from PyQt5.QtWidgets import QLabel, QSlider, QCheckBox, QComboBox, QSizePolicy, QVBoxLayout, QFrame, QGraphicsView, \
-    QGraphicsScene, QHBoxLayout, QGraphicsPixmapItem
-from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QRectF, QSize, QCoreApplication
-from PyQt5.QtGui import QPixmap, QColor, QBrush
+    QGraphicsScene, QHBoxLayout, QGraphicsPixmapItem, QColorDialog
+from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QRectF, QSize, QCoreApplication, QUrl
+from PyQt5.QtGui import QPixmap, QColor, QBrush, QImage, QCursor, QDesktopServices
 import os
 import re
 import cv2
 import pandas as pd
 from globalobject import GlobalObject
+import tifffile
 
 
 def check_file_for_new_image(filename):
     # Regular expression to match file extensions .tif, .tiff, .jpg, or .png
     pattern = r"1\.(tif|tiff|jpg|png)$"
+    match = re.search(pattern, filename, re.IGNORECASE)
+    if match:
+        return True
+    else:
+        return False
+
+
+def check_file_for_tif_image(filename):
+    # Regular expression to match .tif file
+    pattern = r"\.(tif|tiff)$"
     match = re.search(pattern, filename, re.IGNORECASE)
     if match:
         return True
@@ -58,14 +71,14 @@ class PhotoViewer(QGraphicsView):
         self.setFrameShape(QFrame.NoFrame)
         self.setContentsMargins(0, 0, 0, 0)
 
-    def hasPhoto(self):
+    def has_photo(self):
         return not self._empty
 
     def fitInView(self, scale=True):
         rect = QRectF(self._photo.pixmap().rect())
         if not rect.isNull():
             self.setSceneRect(rect)
-            if self.hasPhoto():
+            if self.has_photo():
                 unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
                 self.scale(1 / unity.width(), 1 / unity.height())
                 viewrect = self.viewport().rect()
@@ -75,7 +88,7 @@ class PhotoViewer(QGraphicsView):
                 self.scale(factor, factor)
             self._zoom = 0
 
-    def setPhoto(self, pixmap=None):
+    def set_photo(self, pixmap=None):
         self._zoom = 0
         if pixmap and not pixmap.isNull():
             self._empty = False
@@ -88,7 +101,7 @@ class PhotoViewer(QGraphicsView):
         self.fitInView()
 
     def wheelEvent(self, event):
-        if self.hasPhoto():
+        if self.has_photo():
             if event.angleDelta().y() > 0:
                 factor = 1.25
                 self._zoom += 1
@@ -164,7 +177,21 @@ class PhotoViewer(QGraphicsView):
             event.ignore()
 
     def set_image(self, file_path):
-        self.setPhoto(QPixmap(file_path))
+        if check_file_for_tif_image(file_path):
+            print("trying to add in the tif file")
+            tif_data = tifffile.imread(file_path)
+            print(tif_data)
+            height, width = tif_data.shape
+            bytes_per_line = 2 * width
+            print(width, height, bytes_per_line)
+            img_scaled = cv2.normalize(tif_data, dst=None, alpha=0, beta=65535, norm_type=cv2.NORM_MINMAX)
+            image = QImage(img_scaled.data, width, height, bytes_per_line, QImage.Format_Grayscale16)
+            print("image ", image)
+            pixmap = QPixmap.fromImage(image)
+            print("pixmap ", pixmap)
+            self.set_photo(pixmap)
+        else:
+            self.set_photo(QPixmap(file_path))
 
 
 class ImageFrameContainer(QFrame):
@@ -187,7 +214,7 @@ class ImageFrameContainer(QFrame):
 
 
 class SliderForProteinFrame(QFrame):
-    def __init__(self, parent=None, column_names=None, color_for_display=None):
+    def __init__(self, parent=None, column_names=None, color_for_display=None, current_list_index=0):
         super(SliderForProteinFrame, self).__init__(parent)
         size_policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
         size_policy.setHorizontalStretch(0)
@@ -200,7 +227,7 @@ class SliderForProteinFrame(QFrame):
         self.setObjectName("frame_32")
 
         self.verticalLayout_17 = QVBoxLayout(self)
-        self.verticalLayout_17.setContentsMargins(11, 11, 11, -1)
+        self.verticalLayout_17.setContentsMargins(8, 8, 8, -1)
         self.verticalLayout_17.setObjectName("verticalLayout_18")
 
         # Check Box and Combo Box Frame
@@ -221,14 +248,15 @@ class SliderForProteinFrame(QFrame):
         self.horizontalLayout_4.setObjectName("horizontalLayout_6")
         # Create Combo Box
         self.comboBox_14 = QComboBox(self.frame_11)
+        self.comboBox_14.setStyleSheet("QComboBox { padding: 4px; }")
         self.comboBox_14.setObjectName("comboBox_17")
         for _ in column_names:
             self.comboBox_14.addItem("")
         self.horizontalLayout_4.addWidget(self.comboBox_14)
         # Create Check Box
         self.checkBox_7 = QCheckBox(self.frame_11)
-        self.checkBox_7.setText("")
         self.checkBox_7.setObjectName("checkBox_8")
+
         self.horizontalLayout_4.addWidget(self.checkBox_7)
         self.verticalLayout_17.addWidget(self.frame_11)
 
@@ -251,12 +279,15 @@ class SliderForProteinFrame(QFrame):
         self.horizontalSlider_7.setObjectName("horizontalSlider_8")
         self.horizontalLayout_3.addWidget(self.horizontalSlider_7)
         self.label_5 = QLabel(self.frame_10)
-        self.label_5.setMinimumSize(QSize(20, 20))
-        self.label_5.setMaximumSize(QSize(20, 20))
+        size_of_label_5 = 26
+        self.label_5.setMinimumSize(QSize(size_of_label_5, size_of_label_5))
+        self.label_5.setMaximumSize(QSize(size_of_label_5, size_of_label_5))
         self.label_5.setAutoFillBackground(False)
-        self.label_5.setStyleSheet("QLabel {\n"
-                                   "background-color: " + color_for_display + ";\n"
-                                                                              "}")
+        self.label_5.setStyleSheet(
+            "background-color: " + color_for_display + "; "
+            + "border-radius: " + "13px" + "; "
+        )
+        self.label_5.mousePressEvent = functools.partial(self.color_block_clicked, source_object=self.label_5)
         self.label_5.setText("")
         self.label_5.setObjectName("label_6")
         self.horizontalLayout_3.addWidget(self.label_5)
@@ -279,3 +310,28 @@ class SliderForProteinFrame(QFrame):
                 continue
             self.comboBox_14.setItemText(counter, _translate("MainWindow", column))
             counter += 1
+        self.comboBox_14.setCurrentIndex(current_list_index)
+
+    def color_block_clicked(self, event, source_object=None):
+        color = QColorDialog.getColor()
+        if color.isValid():
+            self.label_5.setStyleSheet(
+                "background-color: {}".format(color.name()) + "; " + "border-radius: " + "13px" + ";")
+
+
+class LabClickableFrame(QFrame):
+    def __init__(self, parent=None):
+        super(LabClickableFrame, self).__init__(parent)
+        self.setCursor(QCursor(Qt.PointingHandCursor))
+
+    def mousePressEvent(self, event):
+        QDesktopServices.openUrl(QUrl("https://www.multiplexbiotechnologylab.com/"))
+
+
+class GithubClickableFrame(QFrame):
+    def __init__(self, parent=None):
+        super(GithubClickableFrame, self).__init__(parent)
+        self.setCursor(QCursor(Qt.PointingHandCursor))
+
+    def mousePressEvent(self, event):
+        QDesktopServices.openUrl(QUrl("https://github.com/Ktuzinowski/MBL_PyQt_Desktop"))

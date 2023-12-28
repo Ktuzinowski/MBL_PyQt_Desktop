@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/home_icon.png</file>
     <file>images/graph_of_t_sne.png</file>
     <file>icons/science_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/remove_FILL0_wght400_GRAD0_opsz24.svg</file>

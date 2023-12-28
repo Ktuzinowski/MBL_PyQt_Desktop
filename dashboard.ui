@@ -6,12 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1517</width>
-    <height>1534</height>
+    <width>1189</width>
+    <height>1003</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/icons/home_icon.png</normaloff>:/icons/icons/home_icon.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">@font-face {
@@ -21,8 +31,8 @@
 *{
 color: black;
 font-family: times;
-font-size: 13px;
-border: nine;
+font-size: 12px;
+border: none;
 background: none;
 }
 #centralwidget {
@@ -73,7 +83,7 @@ background-color: rgba(100,100,100,100);
       </property>
       <property name="maximumSize">
        <size>
-        <width>200</width>
+        <width>100</width>
         <height>16777215</height>
        </size>
       </property>
@@ -175,6 +185,11 @@ background-color: rgba(100,100,100,100);
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel {
+font-size: 11px;
+}</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -186,13 +201,13 @@ background-color: rgba(100,100,100,100);
            <number>2</number>
           </property>
           <property name="topMargin">
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="bottomMargin">
-           <number>2</number>
+           <number>0</number>
           </property>
           <item>
            <widget class="QPushButton" name="percentage_bar_btn">
@@ -205,53 +220,33 @@ background-color: rgba(100,100,100,100);
             <property name="text">
              <string>Protein</string>
             </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/icons/icons/bar_chart_FILL0_wght400_GRAD0_opsz24.svg</normaloff>:/icons/icons/bar_chart_FILL0_wght400_GRAD0_opsz24.svg</iconset>
-            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="temperature_bar_btn">
             <property name="text">
-             <string>Transcription</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/icons/icons/device_thermostat_FILL0_wght400_GRAD0_opsz24.svg</normaloff>:/icons/icons/device_thermostat_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+             <string>Segmentation</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="nested_donut_btn">
             <property name="text">
-             <string>Analytics</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/icons/icons/pie_chart_FILL0_wght400_GRAD0_opsz24.svg</normaloff>:/icons/icons/pie_chart_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+             <string>Extra</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="line_chart_btn">
             <property name="text">
-             <string>Segmentation</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/icons/icons/stacked_line_chart_FILL0_wght400_GRAD0_opsz24.svg</normaloff>:/icons/icons/stacked_line_chart_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+             <string>Extra</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="bar_charts_btn">
             <property name="text">
-             <string>Post-Processing</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/icons/icons/bar_chart_4_bars_FILL0_wght400_GRAD0_opsz24.svg</normaloff>:/icons/icons/bar_chart_4_bars_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+             <string>Extra</string>
             </property>
            </widget>
           </item>
@@ -273,46 +268,30 @@ background-color: rgba(100,100,100,100);
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QLabel" name="label_15">
-            <property name="minimumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QLabel {
-background-color: #ff3232
-}</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="resources.qrc">:/images/images/wolf (1).png</pixmap>
-            </property>
-            <property name="scaledContents">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item alignment="Qt::AlignHCenter">
            <widget class="QLabel" name="label_2">
             <property name="font">
              <font>
               <family>times</family>
               <pointsize>-1</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel {
+font-size: 11px;
+}</string>
             </property>
             <property name="text">
              <string>INFORMATION</string>
@@ -344,7 +323,7 @@ background-color: #ff3232
            <number>0</number>
           </property>
           <item>
-           <widget class="QFrame" name="frame_22">
+           <widget class="LabClickableFrame" name="frame_22">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -355,6 +334,9 @@ background-color: #ff3232
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <property name="spacing">
+              <number>0</number>
+             </property>
              <item>
               <widget class="QLabel" name="label_3">
                <property name="styleSheet">
@@ -376,7 +358,7 @@ border: none
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Biomedical Engineering</string>
+                <string>MBL Lab</string>
                </property>
               </widget>
              </item>
@@ -384,7 +366,7 @@ border: none
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="frame_21">
+           <widget class="GithubClickableFrame" name="frame_21">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -450,6 +432,9 @@ border: none
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="spacing">
+        <number>7</number>
+       </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -490,6 +475,9 @@ border: none
             </property>
             <widget class="QWidget" name="percentage_bar_chart">
              <layout class="QVBoxLayout" name="verticalLayout_10">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QFrame" name="frame_16">
                 <property name="sizePolicy">
@@ -524,13 +512,13 @@ border: none
                   <widget class="QFrame" name="frame_9">
                    <property name="minimumSize">
                     <size>
-                     <width>280</width>
+                     <width>250</width>
                      <height>0</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>280</width>
+                     <width>250</width>
                      <height>16777215</height>
                     </size>
                    </property>
@@ -578,8 +566,8 @@ border: none
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>280</width>
-                         <height>1456</height>
+                         <width>250</width>
+                         <height>927</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -942,9 +930,22 @@ border: none
    <header>myWidgets.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>LabClickableFrame</class>
+   <extends>QFrame</extends>
+   <header>myWidgets.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GithubClickableFrame</class>
+   <extends>QFrame</extends>
+   <header>myWidgets.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="resources.qrc"/>
+  <include location="../.designer/backup/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

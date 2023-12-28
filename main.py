@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+
         # Set Window Minimum Size
         self.setMinimumSize(850, 600)
         self.button_navigation()
@@ -60,7 +61,7 @@ class MainWindow(QMainWindow):
             elif column == "GlobY":
                 continue
             new_frame_for_slider = SliderForProteinFrame(self.ui.scrollAreaWidgetContents_3, data_frame.columns,
-                                                         list_of_colors[counter])
+                                                         list_of_colors[counter], current_list_index=counter)
             self.ui.verticalLayout_19.addWidget(new_frame_for_slider)
             counter += 1
 
