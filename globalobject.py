@@ -8,6 +8,10 @@ class GlobalObject(QtCore.QObject):
         super().__init__()
         self._events = {}
         self.data_frame = None
+        self.num_components = 0
+        self.verbose = 0
+        self.perplexity = 0
+        self.num_iterations = 0
 
     def add_event_listener(self, name, func):
         if name not in self._events:

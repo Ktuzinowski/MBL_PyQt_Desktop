@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1189, 1003)
+        MainWindow.resize(1185, 994)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -48,11 +48,34 @@ class Ui_MainWindow(object):
 "#frame_4 QPushButton {\n"
 "padding: 10px;\n"
 "border-radius: 5px;\n"
+"background-color: rgb(222, 222, 222);\n"
+"border: 1px solid black;\n"
+"}\n"
+"#frame_10 QPushButton {\n"
+"padding: 10px;\n"
+"border-radius: 5px;\n"
+"background-color: rgb(222, 222, 222);\n"
+"border: 1px solid black;\n"
+"}\n"
+"#frame_10 QPushButton:hover {\n"
 "background-color: rgba(33,43,51,100);\n"
+"cursor: pointer;\n"
+"}\n"
+"#frame_4 QPushButton:hover {\n"
+"background-color: rgba(33,43,51,100);\n"
+"cursor: pointer;\n"
 "}\n"
 "\n"
-"#frame4 QPushButton:hover {\n"
-"background-color: rgba(100,100,100,100);\n"
+"#formTSNE QPushButton {\n"
+"padding: 10px;\n"
+"border-radius: 5px;\n"
+"background-color: rgb(222, 222, 222);\n"
+"border: 1px solid black;\n"
+"}\n"
+"\n"
+"#formTSNE QPushButton:hover {\n"
+"background-color: rgba(33,43,51,100);\n"
+"cursor: pointer;\n"
 "}\n"
 "\n"
 "\n"
@@ -121,18 +144,23 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.percentage_bar_btn.sizePolicy().hasHeightForWidth())
         self.percentage_bar_btn.setSizePolicy(sizePolicy)
+        self.percentage_bar_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.percentage_bar_btn.setObjectName("percentage_bar_btn")
         self.verticalLayout_3.addWidget(self.percentage_bar_btn)
         self.temperature_bar_btn = QtWidgets.QPushButton(self.frame_4)
+        self.temperature_bar_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.temperature_bar_btn.setObjectName("temperature_bar_btn")
         self.verticalLayout_3.addWidget(self.temperature_bar_btn)
         self.nested_donut_btn = QtWidgets.QPushButton(self.frame_4)
+        self.nested_donut_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.nested_donut_btn.setObjectName("nested_donut_btn")
         self.verticalLayout_3.addWidget(self.nested_donut_btn)
         self.line_chart_btn = QtWidgets.QPushButton(self.frame_4)
+        self.line_chart_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.line_chart_btn.setObjectName("line_chart_btn")
         self.verticalLayout_3.addWidget(self.line_chart_btn)
         self.bar_charts_btn = QtWidgets.QPushButton(self.frame_4)
+        self.bar_charts_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.bar_charts_btn.setObjectName("bar_charts_btn")
         self.verticalLayout_3.addWidget(self.bar_charts_btn)
         self.verticalLayout.addWidget(self.frame_4)
@@ -154,7 +182,7 @@ class Ui_MainWindow(object):
         font.setPointSize(-1)
         self.label_2.setFont(font)
         self.label_2.setStyleSheet("QLabel {\n"
-"font-size: 11px;\n"
+"font-size: 13px;\n"
 "}")
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_7.addWidget(self.label_2, 0, QtCore.Qt.AlignHCenter)
@@ -231,7 +259,7 @@ class Ui_MainWindow(object):
         self.percentage_bar_chart = QtWidgets.QWidget()
         self.percentage_bar_chart.setObjectName("percentage_bar_chart")
         self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.percentage_bar_chart)
-        self.verticalLayout_10.setContentsMargins(0, -1, -1, -1)
+        self.verticalLayout_10.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_10.setObjectName("verticalLayout_10")
         self.frame_16 = QtWidgets.QFrame(self.percentage_bar_chart)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
@@ -247,8 +275,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.frame_9 = QtWidgets.QFrame(self.frame_16)
-        self.frame_9.setMinimumSize(QtCore.QSize(250, 0))
-        self.frame_9.setMaximumSize(QtCore.QSize(250, 16777215))
+        self.frame_9.setMinimumSize(QtCore.QSize(230, 0))
+        self.frame_9.setMaximumSize(QtCore.QSize(230, 16777215))
         self.frame_9.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_9.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_9.setObjectName("frame_9")
@@ -266,10 +294,11 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 250, 927))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 100, 30))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_5.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+        self.verticalLayout_5.setContentsMargins(9, -1, 0, -1)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.frame_23 = QtWidgets.QFrame(self.scrollAreaWidgetContents_3)
         self.frame_23.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -293,28 +322,146 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.frame_7)
         self.frame = QtWidgets.QFrame(self.frame_16)
         self.frame.setMinimumSize(QtCore.QSize(200, 0))
+        self.frame.setMaximumSize(QtCore.QSize(400, 16777215))
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
-        self.verticalLayout_16 = QtWidgets.QVBoxLayout(self.frame)
+        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.frame)
+        self.verticalLayout_11.setContentsMargins(2, -1, 0, -1)
+        self.verticalLayout_11.setSpacing(0)
+        self.verticalLayout_11.setObjectName("verticalLayout_11")
+        self.frame_10 = QtWidgets.QFrame(self.frame)
+        self.frame_10.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.frame_10.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_10.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_10.setObjectName("frame_10")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.frame_10)
+        self.horizontalLayout_3.setContentsMargins(0, 0, -1, 2)
+        self.horizontalLayout_3.setSpacing(0)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.tsne_button = QtWidgets.QPushButton(self.frame_10)
+        self.tsne_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.tsne_button.setObjectName("tsne_button")
+        self.horizontalLayout_3.addWidget(self.tsne_button)
+        self.umap_button = QtWidgets.QPushButton(self.frame_10)
+        self.umap_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.umap_button.setObjectName("umap_button")
+        self.horizontalLayout_3.addWidget(self.umap_button)
+        self.verticalLayout_11.addWidget(self.frame_10, 0, QtCore.Qt.AlignTop)
+        self.frame_11 = QtWidgets.QFrame(self.frame)
+        self.frame_11.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_11.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_11.setObjectName("frame_11")
+        self.verticalLayout_16 = QtWidgets.QVBoxLayout(self.frame_11)
+        self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_16.setObjectName("verticalLayout_16")
+        self.graph_stacked_widget = QtWidgets.QStackedWidget(self.frame_11)
+        self.graph_stacked_widget.setObjectName("graph_stacked_widget")
+        self.TSNE = QtWidgets.QWidget()
+        self.TSNE.setObjectName("TSNE")
+        self.verticalLayout_18 = QtWidgets.QVBoxLayout(self.TSNE)
+        self.verticalLayout_18.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_18.setObjectName("verticalLayout_18")
+        self.frame_12 = QtWidgets.QFrame(self.TSNE)
+        self.frame_12.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_12.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_12.setObjectName("frame_12")
+        self.verticalLayout_17 = QtWidgets.QVBoxLayout(self.frame_12)
+        self.verticalLayout_17.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_17.setSpacing(0)
+        self.verticalLayout_17.setObjectName("verticalLayout_17")
+        self.graphTSNE = GraphFrameContainerTSNE(self.frame_12)
+        self.graphTSNE.setMinimumSize(QtCore.QSize(0, 400))
+        self.graphTSNE.setMaximumSize(QtCore.QSize(16777215, 500))
+        self.graphTSNE.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.graphTSNE.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.graphTSNE.setObjectName("graphTSNE")
+        self.verticalLayout_17.addWidget(self.graphTSNE)
+        self.formTSNE = QtWidgets.QFrame(self.frame_12)
+        self.formTSNE.setStyleSheet("QFrame {\n"
+"border: 1px solid outline;\n"
+"}\n"
+"\n"
+"QLabel {\n"
+"border: none;\n"
+"font-size: 15px;\n"
+"}\n"
+"\n"
+"QSpinBox {\n"
+"font-size: 15px;\n"
+"}")
+        self.formTSNE.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.formTSNE.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.formTSNE.setObjectName("formTSNE")
+        self.verticalLayout_22 = QtWidgets.QVBoxLayout(self.formTSNE)
+        self.verticalLayout_22.setObjectName("verticalLayout_22")
+        self.formLayout = QtWidgets.QFormLayout()
+        self.formLayout.setContentsMargins(10, 10, 10, 10)
+        self.formLayout.setObjectName("formLayout")
+        self.numberOfComponentsLabel = QtWidgets.QLabel(self.formTSNE)
+        font = QtGui.QFont()
+        font.setFamily("times")
+        font.setPointSize(-1)
+        self.numberOfComponentsLabel.setFont(font)
+        self.numberOfComponentsLabel.setObjectName("numberOfComponentsLabel")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.numberOfComponentsLabel)
+        self.numberOfComponentsSpinBox = QtWidgets.QSpinBox(self.formTSNE)
+        self.numberOfComponentsSpinBox.setObjectName("numberOfComponentsSpinBox")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.numberOfComponentsSpinBox)
+        self.verboseLabel = QtWidgets.QLabel(self.formTSNE)
+        self.verboseLabel.setObjectName("verboseLabel")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.verboseLabel)
+        self.verboseCheckBox = QtWidgets.QCheckBox(self.formTSNE)
+        self.verboseCheckBox.setObjectName("verboseCheckBox")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.verboseCheckBox)
+        self.perplexityLabel = QtWidgets.QLabel(self.formTSNE)
+        self.perplexityLabel.setObjectName("perplexityLabel")
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.perplexityLabel)
+        self.perplexitySpinBox = QtWidgets.QSpinBox(self.formTSNE)
+        self.perplexitySpinBox.setObjectName("perplexitySpinBox")
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.perplexitySpinBox)
+        self.numberOfIterationsLabel = QtWidgets.QLabel(self.formTSNE)
+        self.numberOfIterationsLabel.setObjectName("numberOfIterationsLabel")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.numberOfIterationsLabel)
+        self.numberOfIterationsSpinBox = QtWidgets.QSpinBox(self.formTSNE)
+        self.numberOfIterationsSpinBox.setObjectName("numberOfIterationsSpinBox")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.numberOfIterationsSpinBox)
+        self.verticalLayout_22.addLayout(self.formLayout)
+        self.plot_button = QtWidgets.QPushButton(self.formTSNE)
+        self.plot_button.setMinimumSize(QtCore.QSize(0, 40))
+        self.plot_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.plot_button.setObjectName("plot_button")
+        self.verticalLayout_22.addWidget(self.plot_button)
+        self.verticalLayout_17.addWidget(self.formTSNE)
+        self.verticalLayout_18.addWidget(self.frame_12)
+        self.graph_stacked_widget.addWidget(self.TSNE)
+        self.UMAP = QtWidgets.QWidget()
+        self.UMAP.setObjectName("UMAP")
+        self.verticalLayout_20 = QtWidgets.QVBoxLayout(self.UMAP)
+        self.verticalLayout_20.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_20.setObjectName("verticalLayout_20")
+        self.frame_14 = QtWidgets.QFrame(self.UMAP)
+        self.frame_14.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_14.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_14.setObjectName("frame_14")
+        self.verticalLayout_21 = QtWidgets.QVBoxLayout(self.frame_14)
+        self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_21.setObjectName("verticalLayout_21")
+        self.label_6 = QtWidgets.QLabel(self.frame_14)
+        self.label_6.setObjectName("label_6")
+        self.verticalLayout_21.addWidget(self.label_6)
+        self.verticalLayout_20.addWidget(self.frame_14)
+        self.graph_stacked_widget.addWidget(self.UMAP)
+        self.verticalLayout_16.addWidget(self.graph_stacked_widget)
+        self.verticalLayout_11.addWidget(self.frame_11)
         self.horizontalLayout_2.addWidget(self.frame)
         self.verticalLayout_10.addWidget(self.frame_16)
         self.stackedWidget.addWidget(self.percentage_bar_chart)
         self.temperature_bar_chart = QtWidgets.QWidget()
         self.temperature_bar_chart.setObjectName("temperature_bar_chart")
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.temperature_bar_chart)
+        self.verticalLayout_12.setContentsMargins(11, -1, -1, -1)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
-        self.label_10 = QtWidgets.QLabel(self.temperature_bar_chart)
-        font = QtGui.QFont()
-        font.setFamily("times")
-        font.setPointSize(-1)
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_10.setFont(font)
-        self.label_10.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_10.setObjectName("label_10")
-        self.verticalLayout_12.addWidget(self.label_10)
         self.frame_17 = QtWidgets.QFrame(self.temperature_bar_chart)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -324,8 +471,230 @@ class Ui_MainWindow(object):
         self.frame_17.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_17.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_17.setObjectName("frame_17")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.frame_17)
-        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.horizontalLayout_10 = QtWidgets.QHBoxLayout(self.frame_17)
+        self.horizontalLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_10.setSpacing(0)
+        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
+        self.frame_15 = QtWidgets.QFrame(self.frame_17)
+        self.frame_15.setMaximumSize(QtCore.QSize(300, 16777215))
+        self.frame_15.setStyleSheet("QLabel {\n"
+"font-family: arial;\n"
+"font-size: 15px;\n"
+"}\n"
+"\n"
+"QDoubleSpinBox {\n"
+"font-size: 15px;\n"
+"padding: 2px;\n"
+"}\n"
+"\n"
+"QRadioButton {\n"
+"font-family: arial;\n"
+"font-size: 13px;\n"
+"}\n"
+"\n"
+"QPushButton {\n"
+"font-family: arial;\n"
+"border: 1px solid black;\n"
+"height: 30px;\n"
+"border-radius: 10px;\n"
+"font-size: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"background-color: rgba(33,43,51,100);\n"
+"cursor: pointer;\n"
+"}\n"
+"\n"
+"QComboBox {\n"
+"font-size: 15px;\n"
+"padding: 3px;\n"
+"}")
+        self.frame_15.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_15.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_15.setObjectName("frame_15")
+        self.verticalLayout_24 = QtWidgets.QVBoxLayout(self.frame_15)
+        self.verticalLayout_24.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+        self.verticalLayout_24.setContentsMargins(0, 0, 10, 10)
+        self.verticalLayout_24.setSpacing(7)
+        self.verticalLayout_24.setObjectName("verticalLayout_24")
+        self.verticalLayout_23 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_23.setContentsMargins(-1, -1, -1, 23)
+        self.verticalLayout_23.setObjectName("verticalLayout_23")
+        self.label_5 = QtWidgets.QLabel(self.frame_15)
+        self.label_5.setMaximumSize(QtCore.QSize(16777215, 17))
+        self.label_5.setStyleSheet("QLabel {\n"
+"font-weight: bold;\n"
+"font-size: 18px;\n"
+"}")
+        self.label_5.setObjectName("label_5")
+        self.verticalLayout_23.addWidget(self.label_5)
+        self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_11.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
+        self.horizontalLayout_11.setContentsMargins(-1, 7, -1, -1)
+        self.horizontalLayout_11.setObjectName("horizontalLayout_11")
+        self.button_a = QtWidgets.QRadioButton(self.frame_15)
+        self.button_a.setChecked(True)
+        self.button_a.setObjectName("button_a")
+        self.horizontalLayout_11.addWidget(self.button_a)
+        self.button_b = QtWidgets.QRadioButton(self.frame_15)
+        self.button_b.setObjectName("button_b")
+        self.horizontalLayout_11.addWidget(self.button_b)
+        self.button_c = QtWidgets.QRadioButton(self.frame_15)
+        self.button_c.setObjectName("button_c")
+        self.horizontalLayout_11.addWidget(self.button_c)
+        self.button_d = QtWidgets.QRadioButton(self.frame_15)
+        self.button_d.setObjectName("button_d")
+        self.horizontalLayout_11.addWidget(self.button_d)
+        self.verticalLayout_23.addLayout(self.horizontalLayout_11)
+        self.verticalLayout_24.addLayout(self.verticalLayout_23)
+        self.label_7 = QtWidgets.QLabel(self.frame_15)
+        self.label_7.setMaximumSize(QtCore.QSize(16777215, 25))
+        self.label_7.setStyleSheet("QLabel {\n"
+"font-weight: bold;\n"
+"font-size: 18px;\n"
+"}")
+        self.label_7.setObjectName("label_7")
+        self.verticalLayout_24.addWidget(self.label_7)
+        self.label_9 = QtWidgets.QLabel(self.frame_15)
+        self.label_9.setMaximumSize(QtCore.QSize(16777215, 22))
+        self.label_9.setStyleSheet("QLabel {\n"
+"font-weight: none;\n"
+"}")
+        self.label_9.setObjectName("label_9")
+        self.verticalLayout_24.addWidget(self.label_9)
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_12.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+        self.horizontalLayout_12.setContentsMargins(-1, -1, -1, 20)
+        self.horizontalLayout_12.setSpacing(10)
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
+        self.doubleSpinBox = QtWidgets.QDoubleSpinBox(self.frame_15)
+        self.doubleSpinBox.setStyleSheet("")
+        self.doubleSpinBox.setObjectName("doubleSpinBox")
+        self.horizontalLayout_12.addWidget(self.doubleSpinBox)
+        self.pushButton = QtWidgets.QPushButton(self.frame_15)
+        self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pushButton.setStyleSheet("")
+        self.pushButton.setObjectName("pushButton")
+        self.horizontalLayout_12.addWidget(self.pushButton)
+        self.verticalLayout_24.addLayout(self.horizontalLayout_12)
+        self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_13.setContentsMargins(-1, 5, -1, -1)
+        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
+        self.label_10 = QtWidgets.QLabel(self.frame_15)
+        self.label_10.setObjectName("label_10")
+        self.horizontalLayout_13.addWidget(self.label_10)
+        self.comboBox = QtWidgets.QComboBox(self.frame_15)
+        self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.horizontalLayout_13.addWidget(self.comboBox)
+        self.verticalLayout_24.addLayout(self.horizontalLayout_13)
+        self.horizontalLayout_14 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_14.setContentsMargins(-1, 10, -1, 20)
+        self.horizontalLayout_14.setObjectName("horizontalLayout_14")
+        self.chan2 = QtWidgets.QLabel(self.frame_15)
+        self.chan2.setObjectName("chan2")
+        self.horizontalLayout_14.addWidget(self.chan2)
+        self.comboBox_2 = QtWidgets.QComboBox(self.frame_15)
+        self.comboBox_2.setObjectName("comboBox_2")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.horizontalLayout_14.addWidget(self.comboBox_2)
+        self.verticalLayout_24.addLayout(self.horizontalLayout_14)
+        self.horizontalLayout_15 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_15.setObjectName("horizontalLayout_15")
+        self.label_18 = QtWidgets.QLabel(self.frame_15)
+        self.label_18.setObjectName("label_18")
+        self.horizontalLayout_15.addWidget(self.label_18)
+        self.doubleSpinBox_2 = QtWidgets.QDoubleSpinBox(self.frame_15)
+        self.doubleSpinBox_2.setObjectName("doubleSpinBox_2")
+        self.horizontalLayout_15.addWidget(self.doubleSpinBox_2)
+        self.verticalLayout_24.addLayout(self.horizontalLayout_15)
+        self.horizontalLayout_16 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_16.setContentsMargins(-1, 10, -1, -1)
+        self.horizontalLayout_16.setObjectName("horizontalLayout_16")
+        self.label_19 = QtWidgets.QLabel(self.frame_15)
+        self.label_19.setObjectName("label_19")
+        self.horizontalLayout_16.addWidget(self.label_19)
+        self.doubleSpinBox_3 = QtWidgets.QDoubleSpinBox(self.frame_15)
+        self.doubleSpinBox_3.setObjectName("doubleSpinBox_3")
+        self.horizontalLayout_16.addWidget(self.doubleSpinBox_3)
+        self.verticalLayout_24.addLayout(self.horizontalLayout_16)
+        self.horizontalLayout_17 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_17.setContentsMargins(-1, 10, -1, 20)
+        self.horizontalLayout_17.setObjectName("horizontalLayout_17")
+        self.label_20 = QtWidgets.QLabel(self.frame_15)
+        self.label_20.setObjectName("label_20")
+        self.horizontalLayout_17.addWidget(self.label_20)
+        self.doubleSpinBox_4 = QtWidgets.QDoubleSpinBox(self.frame_15)
+        self.doubleSpinBox_4.setObjectName("doubleSpinBox_4")
+        self.horizontalLayout_17.addWidget(self.doubleSpinBox_4)
+        self.verticalLayout_24.addLayout(self.horizontalLayout_17)
+        self.horizontalLayout_18 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_18.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+        self.horizontalLayout_18.setContentsMargins(-1, 10, -1, -1)
+        self.horizontalLayout_18.setObjectName("horizontalLayout_18")
+        self.comboBox_3 = QtWidgets.QComboBox(self.frame_15)
+        self.comboBox_3.setObjectName("comboBox_3")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.horizontalLayout_18.addWidget(self.comboBox_3)
+        self.pushButton_2 = QtWidgets.QPushButton(self.frame_15)
+        self.pushButton_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.horizontalLayout_18.addWidget(self.pushButton_2)
+        self.verticalLayout_24.addLayout(self.horizontalLayout_18)
+        self.horizontalLayout_19 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_19.setContentsMargins(-1, 10, -1, 30)
+        self.horizontalLayout_19.setSpacing(13)
+        self.horizontalLayout_19.setObjectName("horizontalLayout_19")
+        self.progressBar = QtWidgets.QProgressBar(self.frame_15)
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setObjectName("progressBar")
+        self.horizontalLayout_19.addWidget(self.progressBar)
+        self.label_15 = QtWidgets.QLabel(self.frame_15)
+        self.label_15.setStyleSheet("QLabel {\n"
+"font-weight: bold;\n"
+"}")
+        self.label_15.setObjectName("label_15")
+        self.horizontalLayout_19.addWidget(self.label_15)
+        self.verticalLayout_24.addLayout(self.horizontalLayout_19)
+        self.label_21 = QtWidgets.QLabel(self.frame_15)
+        self.label_21.setMaximumSize(QtCore.QSize(16777215, 25))
+        self.label_21.setStyleSheet("QLabel {\n"
+"font-weight: bold;\n"
+"font-size: 18px;\n"
+"}")
+        self.label_21.setObjectName("label_21")
+        self.verticalLayout_24.addWidget(self.label_21)
+        self.checkBox = QtWidgets.QCheckBox(self.frame_15)
+        self.checkBox.setObjectName("checkBox")
+        self.verticalLayout_24.addWidget(self.checkBox)
+        self.horizontalSlider = QtWidgets.QSlider(self.frame_15)
+        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider.setInvertedAppearance(False)
+        self.horizontalSlider.setInvertedControls(False)
+        self.horizontalSlider.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.horizontalSlider.setObjectName("horizontalSlider")
+        self.verticalLayout_24.addWidget(self.horizontalSlider)
+        self.horizontalLayout_10.addWidget(self.frame_15, 0, QtCore.Qt.AlignTop)
+        self.frame_24 = ImageFrameContainer(self.frame_17)
+        self.frame_24.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_24.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_24.setObjectName("frame_24")
+        self.horizontalLayout_10.addWidget(self.frame_24)
+        self.frame_25 = QtWidgets.QFrame(self.frame_17)
+        self.frame_25.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_25.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_25.setObjectName("frame_25")
+        self.horizontalLayout_10.addWidget(self.frame_25)
         self.verticalLayout_12.addWidget(self.frame_17)
         self.stackedWidget.addWidget(self.temperature_bar_chart)
         self.nested_donuts = QtWidgets.QWidget()
@@ -449,7 +818,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -461,13 +830,51 @@ class Ui_MainWindow(object):
         self.nested_donut_btn.setText(_translate("MainWindow", "Extra"))
         self.line_chart_btn.setText(_translate("MainWindow", "Extra"))
         self.bar_charts_btn.setText(_translate("MainWindow", "Extra"))
-        self.label_2.setText(_translate("MainWindow", "INFORMATION"))
+        self.label_2.setText(_translate("MainWindow", "Information"))
         self.label_17.setText(_translate("MainWindow", "MBL Lab"))
         self.label_16.setText(_translate("MainWindow", "Github"))
-        self.label_10.setText(_translate("MainWindow", "Temperature Records"))
+        self.tsne_button.setText(_translate("MainWindow", "T-SNE"))
+        self.umap_button.setText(_translate("MainWindow", "UMAP"))
+        self.numberOfComponentsLabel.setText(_translate("MainWindow", "Number of Components:"))
+        self.verboseLabel.setText(_translate("MainWindow", "Verbose:"))
+        self.perplexityLabel.setText(_translate("MainWindow", "Perplexity:"))
+        self.numberOfIterationsLabel.setText(_translate("MainWindow", "Number of Iterations:"))
+        self.plot_button.setText(_translate("MainWindow", "PLOT"))
+        self.label_6.setText(_translate("MainWindow", "this is UMAP"))
+        self.label_5.setText(_translate("MainWindow", "Views:"))
+        self.button_a.setText(_translate("MainWindow", "Image"))
+        self.button_b.setText(_translate("MainWindow", "GradXY"))
+        self.button_c.setText(_translate("MainWindow", "Cellprob"))
+        self.button_d.setText(_translate("MainWindow", "GradZ"))
+        self.label_7.setText(_translate("MainWindow", "Segmentation:"))
+        self.label_9.setText(_translate("MainWindow", "cell diameter (pixels):"))
+        self.pushButton.setText(_translate("MainWindow", "Calibrate"))
+        self.label_10.setText(_translate("MainWindow", "Chan to Segment:"))
+        self.comboBox.setItemText(0, _translate("MainWindow", "0: Gray"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "1: Red"))
+        self.comboBox.setItemText(2, _translate("MainWindow", "2: Green"))
+        self.comboBox.setItemText(3, _translate("MainWindow", "3: Blue"))
+        self.chan2.setText(_translate("MainWindow", "Chan2 (optional):"))
+        self.comboBox_2.setItemText(0, _translate("MainWindow", "0: None"))
+        self.comboBox_2.setItemText(1, _translate("MainWindow", "1: Red"))
+        self.comboBox_2.setItemText(2, _translate("MainWindow", "2: Green"))
+        self.comboBox_2.setItemText(3, _translate("MainWindow", "3: Blue"))
+        self.label_18.setText(_translate("MainWindow", "Flow Threshold:"))
+        self.label_19.setText(_translate("MainWindow", "Cellprob Threshold:"))
+        self.label_20.setText(_translate("MainWindow", "Stitch Threshold:"))
+        self.comboBox_3.setItemText(0, _translate("MainWindow", "Cyto2"))
+        self.comboBox_3.setItemText(1, _translate("MainWindow", "Cyto"))
+        self.comboBox_3.setItemText(2, _translate("MainWindow", "Nuclei"))
+        self.comboBox_3.setItemText(3, _translate("MainWindow", "Tissuenet"))
+        self.comboBox_3.setItemText(4, _translate("MainWindow", "Livecell"))
+        self.pushButton_2.setText(_translate("MainWindow", "Run Model"))
+        self.label_15.setText(_translate("MainWindow", "0 ROIs"))
+        self.label_21.setText(_translate("MainWindow", "Image Saturation:"))
+        self.checkBox.setText(_translate("MainWindow", "Auto-Adjust"))
         self.label_11.setText(_translate("MainWindow", "Nested Donut Chart"))
         self.label_12.setText(_translate("MainWindow", "Line Charts"))
         self.label_13.setText(_translate("MainWindow", "Bar Chart"))
         self.label_8.setText(_translate("MainWindow", "GPL License SBU 2023"))
 from myWidgets import GithubClickableFrame, ImageFrameContainer, LabClickableFrame
+from tsne_widgets import GraphFrameContainerTSNE
 import resources_rc

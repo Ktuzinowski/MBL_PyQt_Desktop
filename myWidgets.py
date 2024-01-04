@@ -3,11 +3,12 @@ import functools
 from PyQt5.QtWidgets import QLabel, QSlider, QCheckBox, QComboBox, QSizePolicy, QVBoxLayout, QFrame, QGraphicsView, \
     QGraphicsScene, QHBoxLayout, QGraphicsPixmapItem, QColorDialog
 from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QRectF, QSize, QCoreApplication, QUrl
-from PyQt5.QtGui import QPixmap, QColor, QBrush, QImage, QCursor, QDesktopServices
+from PyQt5.QtGui import QPixmap, QColor, QBrush, QImage, QCursor, QDesktopServices, QTransform
 import os
 import re
 import cv2
 import pandas as pd
+
 from globalobject import GlobalObject
 import tifffile
 
@@ -85,6 +86,7 @@ class PhotoViewer(QGraphicsView):
                 scenerect = self.transform().mapRect(rect)
                 factor = min(viewrect.width() / scenerect.width(),
                              viewrect.height() / scenerect.height())
+                factor *= 0.97
                 self.scale(factor, factor)
             self._zoom = 0
 
@@ -191,7 +193,9 @@ class PhotoViewer(QGraphicsView):
             print("pixmap ", pixmap)
             self.set_photo(pixmap)
         else:
-            self.set_photo(QPixmap(file_path))
+            image = QImage(file_path)
+            pixmap = QPixmap.fromImage(image.transformed(QTransform().rotate(90)))
+            self.set_photo(pixmap)
 
 
 class ImageFrameContainer(QFrame):
@@ -227,7 +231,7 @@ class SliderForProteinFrame(QFrame):
         self.setObjectName("frame_32")
 
         self.verticalLayout_17 = QVBoxLayout(self)
-        self.verticalLayout_17.setContentsMargins(8, 8, 8, -1)
+        self.verticalLayout_17.setContentsMargins(0, 8, 8, -1)
         self.verticalLayout_17.setObjectName("verticalLayout_18")
 
         # Check Box and Combo Box Frame
