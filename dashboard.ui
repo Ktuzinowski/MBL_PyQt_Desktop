@@ -613,7 +613,7 @@ border: none
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
+                         <width>230</width>
                          <height>30</height>
                         </rect>
                        </property>
@@ -1026,7 +1026,7 @@ font-size: 15px;
                <number>11</number>
               </property>
               <item>
-               <widget class="QFrame" name="frame_17">
+               <widget class="SegmentationParameterListFrameContainer" name="frame_17">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -1067,6 +1067,10 @@ font-size: 15px;
                     <string notr="true">QLabel {
 font-family: arial;
 font-size: 15px;
+}
+
+QCheckBox {
+font-size: 13px;
 }
 
 QDoubleSpinBox {
@@ -1125,7 +1129,7 @@ padding: 3px;
                     <item>
                      <layout class="QVBoxLayout" name="verticalLayout_23">
                       <property name="bottomMargin">
-                       <number>23</number>
+                       <number>7</number>
                       </property>
                       <item>
                        <widget class="QLabel" name="label_5">
@@ -1155,7 +1159,7 @@ font-size: 18px;
                          <number>7</number>
                         </property>
                         <item>
-                         <widget class="QRadioButton" name="button_a">
+                         <widget class="QRadioButton" name="image_button">
                           <property name="text">
                            <string>Image</string>
                           </property>
@@ -1165,27 +1169,51 @@ font-size: 18px;
                          </widget>
                         </item>
                         <item>
-                         <widget class="QRadioButton" name="button_b">
+                         <widget class="QRadioButton" name="gradxy_button">
                           <property name="text">
                            <string>GradXY</string>
                           </property>
                          </widget>
                         </item>
                         <item>
-                         <widget class="QRadioButton" name="button_c">
+                         <widget class="QRadioButton" name="cellprob_button">
                           <property name="text">
                            <string>Cellprob</string>
                           </property>
                          </widget>
                         </item>
                         <item>
-                         <widget class="QRadioButton" name="button_d">
+                         <widget class="QRadioButton" name="gradz_button">
                           <property name="text">
                            <string>GradZ</string>
                           </property>
                          </widget>
                         </item>
                        </layout>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_21">
+                      <property name="bottomMargin">
+                       <number>10</number>
+                      </property>
+                      <item>
+                       <widget class="QCheckBox" name="masksOnCheck">
+                        <property name="text">
+                         <string>Masks On [X]</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QCheckBox" name="outlinesOnCheck">
+                        <property name="styleSheet">
+                         <string notr="true"/>
+                        </property>
+                        <property name="text">
+                         <string>Outlines On [Z]</string>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </item>
@@ -1238,14 +1266,17 @@ font-weight: none;
                        <number>20</number>
                       </property>
                       <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox">
+                       <widget class="QDoubleSpinBox" name="calibrationValue">
                         <property name="styleSheet">
                          <string notr="true"/>
+                        </property>
+                        <property name="value">
+                         <double>30.000000000000000</double>
                         </property>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton">
+                       <widget class="QPushButton" name="calibrateButton">
                         <property name="cursor">
                          <cursorShape>PointingHandCursor</cursorShape>
                         </property>
@@ -1272,7 +1303,7 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QComboBox" name="comboBox">
+                       <widget class="QComboBox" name="firstChannel">
                         <item>
                          <property name="text">
                           <string>0: Gray</string>
@@ -1313,7 +1344,7 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QComboBox" name="comboBox_2">
+                       <widget class="QComboBox" name="channelTwo">
                         <item>
                          <property name="text">
                           <string>0: None</string>
@@ -1348,7 +1379,11 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+                       <widget class="QDoubleSpinBox" name="flowThresholdValue">
+                        <property name="singleStep">
+                         <double>0.500000000000000</double>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </item>
@@ -1365,7 +1400,14 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+                       <widget class="QDoubleSpinBox" name="cellprobThreshold">
+                        <property name="singleStep">
+                         <double>0.500000000000000</double>
+                        </property>
+                        <property name="value">
+                         <double>0.400000000000000</double>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </item>
@@ -1385,7 +1427,11 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
+                       <widget class="QDoubleSpinBox" name="stitchThreshold">
+                        <property name="singleStep">
+                         <double>0.500000000000000</double>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </item>
@@ -1398,7 +1444,7 @@ font-weight: none;
                        <number>10</number>
                       </property>
                       <item>
-                       <widget class="QComboBox" name="comboBox_3">
+                       <widget class="QComboBox" name="modelToRun">
                         <item>
                          <property name="text">
                           <string>Cyto2</string>
@@ -1457,7 +1503,7 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_15">
+                       <widget class="QLabel" name="roiLabel">
                         <property name="styleSheet">
                          <string notr="true">QLabel {
 font-weight: bold;
@@ -1490,14 +1536,14 @@ font-size: 18px;
                      </widget>
                     </item>
                     <item>
-                     <widget class="QCheckBox" name="checkBox">
+                     <widget class="QCheckBox" name="imageSaturationCheckbox">
                       <property name="text">
                        <string>Auto-Adjust</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QSlider" name="horizontalSlider">
+                     <widget class="QSlider" name="imageSaturationSlider">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
@@ -1790,6 +1836,12 @@ font-size: 18px;
    <class>GraphFrameContainerTSNE</class>
    <extends>QFrame</extends>
    <header>tsne_widgets.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SegmentationParameterListFrameContainer</class>
+   <extends>QFrame</extends>
+   <header>segmentation_widgets.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
