@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/home_icon.png</file>
+    <file>images/graph_of_t_sne.png</file>
     <file>icons/science_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/remove_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/bar_chart_4_bars_FILL0_wght400_GRAD0_opsz24.svg</file>
@@ -9,12 +11,9 @@
     <file>icons/code_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/bar_chart_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/monitoring_FILL0_wght400_GRAD0_opsz24.svg</file>
-    <file>icons/apps_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/arrow_forward_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/apps_FILL0_wght400_GRAD0_opsz24.svg</file>
-    <file>icons/arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg</file>
-    <file>icons/arrow_forward_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/check_box_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/close_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file>icons/create_new_folder_FILL0_wght400_GRAD0_opsz24.svg</file>
@@ -42,5 +41,6 @@
   <qresource prefix="images">
     <file>images/wolf.png</file>
     <file>images/wolf (1).png</file>
+    <file>agematched9panelwtJ07c1.jpg</file>
   </qresource>
 </RCC>
