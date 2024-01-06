@@ -509,7 +509,7 @@ border: none
           <item>
            <widget class="QStackedWidget" name="stackedWidget">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="percentage_bar_chart">
              <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1048,7 +1048,7 @@ font-size: 15px;
                <number>11</number>
               </property>
               <item>
-               <widget class="SegmentationParameterListFrameContainer" name="frame_17">
+               <widget class="ParametersContainer" name="frame_17">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -1839,31 +1839,31 @@ font-size: 18px;
   <customwidget>
    <class>ImageFrameContainer</class>
    <extends>QFrame</extends>
-   <header>myWidgets.h</header>
+   <header>protein_screen.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>LabClickableFrame</class>
    <extends>QFrame</extends>
-   <header>myWidgets.h</header>
+   <header>main_screen.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>GithubClickableFrame</class>
    <extends>QFrame</extends>
-   <header>myWidgets.h</header>
+   <header>main_screen.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>GraphFrameContainerTSNE</class>
    <extends>QFrame</extends>
-   <header>tsne_widgets.h</header>
+   <header>protein_screen.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SegmentationParameterListFrameContainer</class>
+   <class>ParametersContainer</class>
    <extends>QFrame</extends>
-   <header>segmentation_widgets.h</header>
+   <header>segmentation_screen.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

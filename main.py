@@ -1,10 +1,9 @@
 import sys
 from PyQt5.QtWidgets import QMainWindow
-from myWidgets import SliderForProteinFrame
+from protein_screen import SliderForProteinFrame
 from Custom_Widgets.Widgets import *
-from globalobject import GlobalObject
+from protein_screen import GlobalObject
 from ui_interface import *
-from segmentation_screen import *
 
 shadow_elements = {
     "frame_3",

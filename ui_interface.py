@@ -468,7 +468,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.temperature_bar_chart)
         self.verticalLayout_12.setContentsMargins(11, -1, -1, -1)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
-        self.frame_17 = SegmentationParameterListFrameContainer(self.temperature_bar_chart)
+        self.frame_17 = ParametersContainer(self.temperature_bar_chart)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -844,7 +844,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -903,7 +903,7 @@ class Ui_MainWindow(object):
         self.label_12.setText(_translate("MainWindow", "Line Charts"))
         self.label_13.setText(_translate("MainWindow", "Bar Chart"))
         self.label_8.setText(_translate("MainWindow", "GPL License SBU 2023"))
-from myWidgets import GithubClickableFrame, ImageFrameContainer, LabClickableFrame
-from segmentation_widgets import SegmentationParameterListFrameContainer
-from tsne_widgets import GraphFrameContainerTSNE
+from main_screen import GithubClickableFrame, LabClickableFrame
+from protein_screen import GraphFrameContainerTSNE, ImageFrameContainer
+from segmentation_screen import ParametersContainer
 import resources_rc

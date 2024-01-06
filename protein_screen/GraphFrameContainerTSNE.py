@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QApplication, QPushButton, QVBoxLayout, QFrame
+from PyQt5.QtWidgets import QVBoxLayout, QFrame
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 import time
 
-from globalobject import GlobalObject
+from protein_screen import GlobalObject
 
 
 class GraphFrameContainerTSNE(QFrame):
@@ -19,7 +19,7 @@ class GraphFrameContainerTSNE(QFrame):
         self.figure = plt.figure()
 
         # this is the Canvas Widget that
-        # displays the 'figure'it takes the
+        # displays the 'figure' it takes the
         # 'figure' instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
 
@@ -31,7 +31,7 @@ class GraphFrameContainerTSNE(QFrame):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
 
-        # adding tool bar to the layout
+        # adding toolbar to the layout
         layout.addWidget(self.toolbar)
 
         # adding canvas to the layout
