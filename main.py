@@ -4,6 +4,7 @@ from myWidgets import SliderForProteinFrame
 from Custom_Widgets.Widgets import *
 from globalobject import GlobalObject
 from ui_interface import *
+from segmentation_screen import *
 
 shadow_elements = {
     "frame_3",
@@ -55,7 +56,6 @@ class MainWindow(QMainWindow):
 
         GlobalObject().add_event_listener("NEW_DATA", self.update_interface_based_on_data)
         self.ui.plot_button.clicked.connect(lambda: self.update_tsne_graph_event())
-        self.ui.numberOfIterationsSpinBox.setRange(0, 1000)
         # SHOW WINDOW
         self.show()
 

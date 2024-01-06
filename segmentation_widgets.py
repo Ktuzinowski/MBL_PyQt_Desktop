@@ -213,6 +213,7 @@ class SegmentationParameterListFrameContainer(QFrame):
 
     def calibrate_for_cell_diameter(self):
         self.initialize_model(model_name='cyto')
+        print(self.current_model)
         diameter, _ = self.model.sz.eval(self.stack[self.currentZ].copy(), channels=self.get_channels(), progress=self.progress)
         diameter = np.maximum(5.0, diameter)
         print('estimated diameter of cells using %s model = %0.1f pixels' % (self.current_model, diameter))
@@ -230,18 +231,22 @@ class SegmentationParameterListFrameContainer(QFrame):
         if model_name is None or not isinstance(model_name, str):
             self.get_model_path()
             self.model = models.CellposeModel(gpu=False, pretrained_model=self.current_model_path)
+            print('ONE: This should be initializing the model currently')
         else:
             self.current_model = model_name
             if 'cyto' in self.current_model or 'nuclei' in self.current_model:
                 self.current_model_path = models.model_path(self.current_model, 0)
+                print('TWO: This should be initializing the model currently')
             else:
                 self.current_model_path = os.fspath(models.MODEL_DIR.joinpath(self.current_model))
+                print('THREE: This should be initializing the model currently')
             if self.current_model == 'cyto':
                 self.model = models.CellposeModel(gpu=False, model_type=self.current_model)
+                print('FOUR: This should be initializing the model currently')
             else:
                 self.model = models.CellposeModel(gpu=False, model_type=self.current_model)
+                print('FIVE: This should be initializing the model currently')
 
     def get_model_path(self):
         self.current_model = self.modelToRun.currentText()
         self.current_model_path = os.fspath(models.MODEL_DIR.joinpath(self.current_model))
-
