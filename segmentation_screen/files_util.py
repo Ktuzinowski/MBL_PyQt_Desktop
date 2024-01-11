@@ -50,7 +50,7 @@ def _load_image(parent, filename=None, load_seg=True):
 
 def _initialize_images(parent, image, resize, X2):
     """ format image for GUI """
-    parent.onechan = False
+    parent.one_channel = False
     if image.ndim > 3:
         # make tiff Z x channels x W x H
         if image.shape[0] < 4:
@@ -65,7 +65,7 @@ def _initialize_images(parent, image, resize, X2):
             image = np.concatenate((image,
                                     np.zeros((shape[0], 3 - shape[1], shape[2], shape[3]), dtype=np.uint8)), axis=1)
             if 3 - shape[1] > 1:
-                parent.onechan = True
+                parent.one_channel = True
         image = np.transpose(image, (0, 2, 3, 1))
     elif image.ndim == 3:
         if image.shape[0] < 5:
@@ -77,7 +77,7 @@ def _initialize_images(parent, image, resize, X2):
             image = np.concatenate((image, np.zeros((shape[0], shape[1], 3 - shape[2]), dtype=type(image[0, 0, 0]))),
                                    axis=-1)
             if 3 - shape[2] > 1:
-                parent.onechan = True
+                parent.one_channel = True
             image = image[np.newaxis, ...]
         elif image.shape[-1] < 5 and image.shape[-1] > 2:
             image = image[:, :, :3]
@@ -105,7 +105,7 @@ def _initialize_images(parent, image, resize, X2):
     # parent.stack = list(parent.stack)
 
     if parent.stack.ndim < 4:
-        parent.onechan = True
+        parent.one_channel = True
         parent.stack = parent.stack[:, :, :, np.newaxis]
 
     parent.imask = 0

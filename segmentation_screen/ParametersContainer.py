@@ -1,8 +1,9 @@
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QFrame, QPushButton, QDoubleSpinBox, QComboBox, QProgressBar
-import numpy as np
-import os
-from cellpose import models
+from PyQt5.QtWidgets import QFrame, QComboBox, QProgressBar, QRadioButton, QCheckBox, QDoubleSpinBox, QPushButton, \
+    QLabel, QSlider
+
+from segmentation_screen import EventHandler
+from segmentation_screen import Events
 
 
 class ParametersContainer(QFrame):
@@ -10,109 +11,114 @@ class ParametersContainer(QFrame):
         super().__init__(*args, *kwargs)
 
         # Timer to load in components before hooking up the corresponding buttons
-        self.model = None
-        self.current_model_path = None
-        self.diameter = None
-        self.calibrationValue = None
-        self.current_model = None
-        self.calibrateButton = None
-        self.firstChannel = None
-        self.secondChannel = None
-        self.progress_bar = None
-        self.modelToRun = None
-        self.NZ, self.Ly, self.Lx = 1, 512, 512
-        self.stack = np.zeros((1, self.Ly, self.Lx, 3))
+        self.image_QRadioButton: QRadioButton = None
+        self.gradXY_QRadioButton: QRadioButton = None
+        self.cellProb_QRadioButton: QRadioButton = None
+        self.gradZ_QRadioButton: QRadioButton = None
+
+        self.masksOnCheck_QCheckBox: QCheckBox = None
+        self.outlinesOnCheck_QCheckBox: QCheckBox = None
+
+        self.calibrationValue_QDoubleSpinBox: QDoubleSpinBox = None
+        self.calibrateButton_QPushButton: QPushButton = None
+
+        self.firstChannel_QComboBox: QComboBox = None
+        self.secondChannel_QComboBox: QComboBox = None
+
+        self.flowThresholdValue_QDoubleSpinBox: QDoubleSpinBox = None
+
+        self.cellprobThresholdValue_QDoubleSpinBox: QDoubleSpinBox = None
+
+        self.stitchThresholdValue_QDoubleSpinBox: QDoubleSpinBox = None
+
+        self.model_QComboBox: QComboBox = None
+        self.runModel_QPushButton: QPushButton = None
+
+        self.progressBarModel_QProgressBar: QProgressBar = None
+        self.roiLabel_QLabel: QLabel = None
+
+        self.autoAdjustImageSaturation_QCheckBox: QCheckBox = None
+        self.imageSaturationSlider_QSlider: QSlider = None
         QTimer.singleShot(50, self.setup_ui_elements)
 
     def setup_ui_elements(self):
-        self.setup_calibration_functionality()
-        self.setup_channel_combo_boxes()
-        self.setup_progress_bar()
+        self.image_QRadioButton = self.findChild(QRadioButton, "image_button")
+        if self.image_QRadioButton is None:
+            print('GUI_INFO: Failed to get the image_QRadioButton')
+        self.gradXY_QRadioButton = self.findChild(QRadioButton, "gradxy_button")
+        if self.gradXY_QRadioButton is None:
+            print('GUI_INFO: Failed to get the gradXY_QRadioButton')
+        self.cellProb_QRadioButton = self.findChild(QRadioButton, "cellprob_button")
+        if self.cellProb_QRadioButton is None:
+            print('GUI_INFO: Failed to get the cellProb_QRadioButton')
+        self.gradZ_QRadioButton = self.findChild(QRadioButton, "gradz_button")
+        if self.gradZ_QRadioButton is None:
+            print('GUI_INFO: Failed to get the gradZ_QRadioButton')
 
-    def setup_model_combo_box(self):
-        self.modelToRun = self.findChild(QComboBox, "modelToRun")
-        if self.modelToRun:
-            print("was able to get the correct model to run comboBox")
-        else:
-            print("was not able to get the correct combobox to select")
+        self.masksOnCheck_QCheckBox = self.findChild(QCheckBox, "masksOnCheck")
+        if self.masksOnCheck_QCheckBox is None:
+            print('GUI_INFO: Failed to get the masksOnCheck_QCheckBox')
+        self.outlinesOnCheck_QCheckBox = self.findChild(QCheckBox, "outlinesOnCheck")
+        if self.outlinesOnCheck_QCheckBox is None:
+            print('GUI_INFO: Failed to get the outlinesOnCheck_QCheckBox')
 
-    def setup_progress_bar(self):
-        self.progress_bar = self.findChild(QProgressBar, "progressBar")
-        if self.progress_bar:
-            print("was able to retrieve the progress bar")
-        else:
-            print("failed to retrieve the progress bar")
+        self.calibrationValue_QDoubleSpinBox = self.findChild(QDoubleSpinBox, "calibrationValue")
+        if self.calibrationValue_QDoubleSpinBox is None:
+            print('GUI_INFO: Failed to get the calibrationValue_QDoubleSpinBox')
+        self.calibrateButton_QPushButton = self.findChild(QPushButton, "calibrateButton")
+        if self.calibrateButton_QPushButton is None:
+            print('GUI_INFO: Failed to get the calibrateButton_QPushButton')
 
-    def setup_channel_combo_boxes(self):
-        self.firstChannel = self.findChild(QComboBox, "firstChannel")
-        if self.firstChannel:
-            print("Correctly setup the first channel")
-        else:
-            print("failed to get the first channel")
+        self.firstChannel_QComboBox = self.findChild(QComboBox, "firstChannel")
+        if self.firstChannel_QComboBox is None:
+            print('GUI_INFO: Failed to get the firstChannel_QComboBox')
+        self.secondChannel_QComboBox = self.findChild(QComboBox, "secondChannel")
+        if self.secondChannel_QComboBox is None:
+            print('GUI_INFO: Failed to get the secondChannel_QComboBox')
 
-        self.secondChannel = self.findChild(QComboBox, "secondChannel")
-        if self.secondChannel:
-            print("Correctly setup the first channel")
-        else:
-            print("failed to get the first channel")
+        self.flowThresholdValue_QDoubleSpinBox = self.findChild(QDoubleSpinBox, "flowThresholdValue")
+        if self.flowThresholdValue_QDoubleSpinBox is None:
+            print('GUI_INFO: Failed to get the flowThresholdValue_QDoubleSpinBox')
 
-    def setup_calibration_functionality(self):
-        self.calibrateButton = self.findChild(QPushButton, "calibrateButton")
-        if self.calibrateButton:
-            self.calibrateButton.clicked.connect(self.calibrate_for_cell_diameter)
-        else:
-            print("could not find calibrate button")
-        self.calibrationValue = self.findChild(QDoubleSpinBox, "calibrationValue")
-        if self.calibrationValue:
-            print("Calibration default value", self.calibrationValue.value())
-        else:
-            print("could not find calibration value double spin box")
+        self.cellprobThresholdValue_QDoubleSpinBox = self.findChild(QDoubleSpinBox, "cellprobThresholdValue")
+        if self.cellprobThresholdValue_QDoubleSpinBox is None:
+            print('GUI_INFO: Failed to get the cellprobThresholdValue_QDoubleSpinBox')
 
-    def list_all_children(self):
-        # Retrieve all children of the frame (including promoted components)
-        all_children = self.findChildren(object)
+        self.stitchThresholdValue_QDoubleSpinBox = self.findChild(QDoubleSpinBox, "stitchThresholdValue")
+        if self.stitchThresholdValue_QDoubleSpinBox is None:
+            print('GUI_INFO: Failed to get the stitchThresholdValue_QDoubleSpinBox')
 
-        # Print out information about each child
-        for child in all_children:
-            print(f"Object Name: {child.objectName()}, Class Name: {child.__class__.__name__}")
+        self.model_QComboBox = self.findChild(QComboBox, "modelName")
+        if self.model_QComboBox is None:
+            print('GUI_INFO: Failed to get the model_QComboBox')
+        self.runModel_QPushButton = self.findChild(QPushButton, "runModelButton")
+        if self.runModel_QPushButton is None:
+            print('GUI_INFO: Failed to get the runModel_QPushButton')
 
-    def calibrate_for_cell_diameter(self):
-        self.initialize_model(model_name='cyto')
-        print(self.current_model)
-        diameter, _ = self.model.sz.eval(self.stack[self.currentZ].copy(), channels=self.get_channels(),
-                                         progress=self.progress)
-        diameter = np.maximum(5.0, diameter)
-        print('estimated diameter of cells using %s model = %0.1f pixels' % (self.current_model, diameter))
-        self.calibrationValue.setValue(diameter)
-        self.diameter = diameter
-        self.progress.setValue(100)
+        self.progressBarModel_QProgressBar = self.findChild(QProgressBar, 'progressBar')
+        if self.progressBarModel_QProgressBar is None:
+            print('GUI_INFO: Failed to get the progressBarModel_QProgressBar')
+        self.roiLabel_QLabel = self.findChild(QLabel, 'roiLabel')
+        if self.roiLabel_QLabel is None:
+            print('GUI_INFO: Failed to get the roiLabel_QLabel')
 
-    def get_channels(self):
-        channels = [self.firstChannel.currentIndex(), self.secondChannel.currentIndex()]
-        if self.current_model == 'nuclei':
-            channels[1] = 0
-        return channels
+        self.autoAdjustImageSaturation_QCheckBox = self.findChild(QCheckBox, "imageSaturationCheckBox")
+        if self.autoAdjustImageSaturation_QCheckBox is None:
+            print('GUI_INFO: Failed to get the autoAdjustImageSaturation_QCheckBox')
+        self.imageSaturationSlider_QSlider = self.findChild(QSlider, "imageSaturationSlider")
+        if self.imageSaturationSlider_QSlider is None:
+            print('GUI_INFO: Failed to get the imageSaturationSlider_QSlider')
 
-    def initialize_model(self, model_name=None):
-        if model_name is None or not isinstance(model_name, str):
-            self.get_model_path()
-            self.model = models.CellposeModel(gpu=False, pretrained_model=self.current_model_path)
-            print('ONE: This should be initializing the model currently')
-        else:
-            self.current_model = model_name
-            if 'cyto' in self.current_model or 'nuclei' in self.current_model:
-                self.current_model_path = models.model_path(self.current_model, 0)
-                print('TWO: This should be initializing the model currently')
-            else:
-                self.current_model_path = os.fspath(models.MODEL_DIR.joinpath(self.current_model))
-                print('THREE: This should be initializing the model currently')
-            if self.current_model == 'cyto':
-                self.model = models.CellposeModel(gpu=False, model_type=self.current_model)
-                print('FOUR: This should be initializing the model currently')
-            else:
-                self.model = models.CellposeModel(gpu=False, model_type=self.current_model)
-                print('FIVE: This should be initializing the model currently')
+        self.setup_events_for_buttons()
 
-    def get_model_path(self):
-        self.current_model = self.modelToRun.currentText()
-        self.current_model_path = os.fspath(models.MODEL_DIR.joinpath(self.current_model))
+    def setup_events_for_buttons(self):
+        self.image_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.IMAGE_SELECTED))
+        self.gradXY_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.GRADXY_SELECTED))
+        self.cellProb_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.CELLPROB_SELECTED))
+        self.gradZ_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.GRADZ_SELECTED))
+        self.masksOnCheck_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(Events.MASKS_ON_TOGGLED))
+        self.outlinesOnCheck_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(Events.OUTLINES_ON_TOGGLED))
+        self.calibrateButton_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.CALIBRATE_PRESSED))
+        self.runModel_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.RUN_MODEL_PRESSED))
+        self.autoAdjustImageSaturation_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(Events.AUTO_ADJUST_TOGGLED))
+        self.imageSaturationSlider_QSlider.sliderMoved.connect(lambda: EventHandler().dispatch_event(Events.SATURATION_SLIDER_ADJUSTED))

@@ -613,8 +613,8 @@ border: none
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>230</width>
-                         <height>940</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1366,7 +1366,7 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QComboBox" name="channelTwo">
+                       <widget class="QComboBox" name="secondChannel">
                         <item>
                          <property name="text">
                           <string>0: None</string>
@@ -1422,7 +1422,7 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QDoubleSpinBox" name="cellprobThreshold">
+                       <widget class="QDoubleSpinBox" name="cellprobThresholdValue">
                         <property name="singleStep">
                          <double>0.500000000000000</double>
                         </property>
@@ -1449,7 +1449,7 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QDoubleSpinBox" name="stitchThreshold">
+                       <widget class="QDoubleSpinBox" name="stitchThresholdValue">
                         <property name="singleStep">
                          <double>0.500000000000000</double>
                         </property>
@@ -1466,7 +1466,7 @@ font-weight: none;
                        <number>10</number>
                       </property>
                       <item>
-                       <widget class="QComboBox" name="modelToRun">
+                       <widget class="QComboBox" name="modelName">
                         <item>
                          <property name="text">
                           <string>Cyto2</string>
@@ -1495,7 +1495,7 @@ font-weight: none;
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton_2">
+                       <widget class="QPushButton" name="runModelButton">
                         <property name="cursor">
                          <cursorShape>PointingHandCursor</cursorShape>
                         </property>
@@ -1558,7 +1558,7 @@ font-size: 18px;
                      </widget>
                     </item>
                     <item>
-                     <widget class="QCheckBox" name="imageSaturationCheckbox">
+                     <widget class="QCheckBox" name="imageSaturationCheckBox">
                       <property name="text">
                        <string>Auto-Adjust</string>
                       </property>
@@ -1584,7 +1584,7 @@ font-size: 18px;
                   </widget>
                  </item>
                  <item>
-                  <widget class="ImageFrameContainer" name="frame_24">
+                  <widget class="DisplayContainer" name="frame_24">
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -1862,6 +1862,12 @@ font-size: 18px;
   </customwidget>
   <customwidget>
    <class>ParametersContainer</class>
+   <extends>QFrame</extends>
+   <header>segmentation_screen.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DisplayContainer</class>
    <extends>QFrame</extends>
    <header>segmentation_screen.h</header>
    <container>1</container>
