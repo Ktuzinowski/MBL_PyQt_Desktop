@@ -1,9 +1,6 @@
-from enum import Enum
-
-
-class Channels(Enum):
-    NONE = 1
-    GRAY = 2
-    RED = 3
-    GREEN = 4
-    BLUE = 5
+class Channels:
+    NONE = 0
+    GRAY = 1
+    RED = 2
+    GREEN = 3
+    BLUE = 4

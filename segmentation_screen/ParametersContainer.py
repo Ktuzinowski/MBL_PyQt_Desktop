@@ -1,9 +1,10 @@
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QFrame, QComboBox, QProgressBar, QRadioButton, QCheckBox, QDoubleSpinBox, QPushButton, \
     QLabel, QSlider
+from superqt import QRangeSlider
 
-from segmentation_screen import EventHandler
-from segmentation_screen import Events
+from segmentation_screen import EventHandler, DisplayEvents
+from segmentation_screen import ParameterEvents
 
 
 class ParametersContainer(QFrame):
@@ -38,7 +39,7 @@ class ParametersContainer(QFrame):
         self.roiLabel_QLabel: QLabel = None
 
         self.autoAdjustImageSaturation_QCheckBox: QCheckBox = None
-        self.imageSaturationSlider_QSlider: QSlider = None
+        self.imageSaturationSlider_QRangeSlider: QRangeSlider = None
         QTimer.singleShot(50, self.setup_ui_elements)
 
     def setup_ui_elements(self):
@@ -105,20 +106,52 @@ class ParametersContainer(QFrame):
         self.autoAdjustImageSaturation_QCheckBox = self.findChild(QCheckBox, "imageSaturationCheckBox")
         if self.autoAdjustImageSaturation_QCheckBox is None:
             print('GUI_INFO: Failed to get the autoAdjustImageSaturation_QCheckBox')
-        self.imageSaturationSlider_QSlider = self.findChild(QSlider, "imageSaturationSlider")
-        if self.imageSaturationSlider_QSlider is None:
+        self.imageSaturationSlider_QRangeSlider = self.findChild(QSlider, "imageSaturationSlider")
+        if self.imageSaturationSlider_QRangeSlider is None:
             print('GUI_INFO: Failed to get the imageSaturationSlider_QSlider')
-
+        self.imageSaturationSlider_QRangeSlider.setMinimum(0)
+        self.imageSaturationSlider_QRangeSlider.setMaximum(255)
+        self.imageSaturationSlider_QRangeSlider.setValue([0, 255])
+        self.imageSaturationSlider_QRangeSlider.setTickPosition(QSlider.TicksRight)
         self.setup_events_for_buttons()
 
+        self.model_QComboBox.currentIndexChanged.connect(self.update_value_for_current_model)
+        self.firstChannel_QComboBox.currentIndexChanged.connect(self.update_value_for_first_channel)
+        self.secondChannel_QComboBox.currentIndexChanged.connect(self.update_value_for_second_channel)
+
+        # Events from DisplayContainer
+        EventHandler().add_event_listener(DisplayEvents.AUTO_ADJUST_SATURATION_SLIDER, self.adjust_max_min_values_for_slider)
+        EventHandler().add_event_listener(DisplayEvents.CALIBRATED_FOR_CELL_DIAMETER, self.update_cell_diameter)
+
     def setup_events_for_buttons(self):
-        self.image_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.IMAGE_SELECTED))
-        self.gradXY_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.GRADXY_SELECTED))
-        self.cellProb_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.CELLPROB_SELECTED))
-        self.gradZ_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.GRADZ_SELECTED))
-        self.masksOnCheck_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(Events.MASKS_ON_TOGGLED))
-        self.outlinesOnCheck_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(Events.OUTLINES_ON_TOGGLED))
-        self.calibrateButton_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.CALIBRATE_PRESSED))
-        self.runModel_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(Events.RUN_MODEL_PRESSED))
-        self.autoAdjustImageSaturation_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(Events.AUTO_ADJUST_TOGGLED))
-        self.imageSaturationSlider_QSlider.sliderMoved.connect(lambda: EventHandler().dispatch_event(Events.SATURATION_SLIDER_ADJUSTED))
+        self.image_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.IMAGE_SELECTED))
+        self.gradXY_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.GRADXY_SELECTED))
+        self.cellProb_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.CELLPROB_SELECTED))
+        self.gradZ_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.GRADZ_SELECTED))
+        self.masksOnCheck_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(ParameterEvents.MASKS_ON_TOGGLED))
+        self.outlinesOnCheck_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(ParameterEvents.OUTLINES_ON_TOGGLED))
+        self.calibrateButton_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.CALIBRATE_PRESSED))
+        self.runModel_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.RUN_MODEL_PRESSED))
+        self.autoAdjustImageSaturation_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(ParameterEvents.AUTO_ADJUST_TOGGLED))
+        self.imageSaturationSlider_QRangeSlider.valueChanged.connect(lambda: self.handle_saturation_value_adjusted())
+
+    def handle_saturation_value_adjusted(self):
+        sval = self.imageSaturationSlider_QRangeSlider.value()
+        EventHandler().saturation_value_min = sval[0]
+        EventHandler().saturation_value_max = sval[1]
+        EventHandler().dispatch_event(ParameterEvents.SATURATION_SLIDER_ADJUSTED)
+
+    def update_value_for_current_model(self):
+        EventHandler().current_model = self.model_QComboBox.currentText().lower()
+
+    def update_value_for_first_channel(self):
+        EventHandler().first_channel = self.firstChannel_QComboBox.currentIndex()
+
+    def update_value_for_second_channel(self):
+        EventHandler().second_channel = self.secondChannel_QComboBox.currentIndex()
+
+    def update_cell_diameter(self):
+        self.calibrationValue_QDoubleSpinBox.setValue(EventHandler().cell_diameter)
+
+    def adjust_max_min_values_for_slider(self):
+        self.imageSaturationSlider_QRangeSlider.setValue([EventHandler().saturation_value_min, EventHandler().saturation_value_max])

@@ -14,8 +14,8 @@ class EventHandler(QtCore.QObject):
         self.outlines_on = False
         self.cell_diameter = 30.0
         self.current_model: Models = Models.CYTO2
-        self.channel_one: Channels = Channels.GRAY
-        self.channel_two: Channels = Channels.NONE
+        self.first_channel: Channels = Channels.GRAY
+        self.second_channel: Channels = Channels.NONE
 
         self.flow_threshold = 0.0
         self.cellprob_threshold = 0.4
@@ -23,7 +23,7 @@ class EventHandler(QtCore.QObject):
 
         self.rois = 0
         self.progress_value = 0
-        self.auto_adjust = False
+        self.auto_adjust = True
         self.saturation_value_min = 0
         self.saturation_value_max = 0
 

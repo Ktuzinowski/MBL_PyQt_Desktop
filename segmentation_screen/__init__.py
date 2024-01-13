@@ -1,4 +1,5 @@
-from .Events import Events
+from .ParameterEvents import ParameterEvents
+from .DisplayEvents import DisplayEvents
 from .Channels import Channels
 from .Models import Models
 from .image_func_utils import make_bwr, avg3d, interpZ, make_spectral, make_cmap

@@ -613,8 +613,8 @@ border: none
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>100</width>
-                         <height>30</height>
+                         <width>230</width>
+                         <height>940</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1289,6 +1289,11 @@ font-weight: none;
                       </property>
                       <item>
                        <widget class="QDoubleSpinBox" name="calibrationValue">
+                        <property name="toolTip">
+                         <string>Manually enter the approximate diameter of the cells,
+or press &quot;calibrate&quot; to let the model estimate it.
+The size is represented at the bottom of the view with a purple disk.</string>
+                        </property>
                         <property name="styleSheet">
                          <string notr="true"/>
                         </property>
@@ -1319,6 +1324,9 @@ font-weight: none;
                       </property>
                       <item>
                        <widget class="QLabel" name="label_10">
+                        <property name="toolTip">
+                         <string>This is the channel in which the cytoplasm or nuclei exist that you want to segment.</string>
+                        </property>
                         <property name="text">
                          <string>Chan to Segment:</string>
                         </property>
@@ -1326,6 +1334,9 @@ font-weight: none;
                       </item>
                       <item>
                        <widget class="QComboBox" name="firstChannel">
+                        <property name="toolTip">
+                         <string>This is the channel in which the cytoplasm or nuclei exist that you want to segment.</string>
+                        </property>
                         <item>
                          <property name="text">
                           <string>0: Gray</string>
@@ -1360,6 +1371,9 @@ font-weight: none;
                       </property>
                       <item>
                        <widget class="QLabel" name="chan2">
+                        <property name="toolTip">
+                         <string>If &lt;em&gt;cytoplasm&lt;/em&gt; model is chosen, and you also have a nuclear channel, then choose the nuclear channel for this option.</string>
+                        </property>
                         <property name="text">
                          <string>Chan2 (optional):</string>
                         </property>
@@ -1367,6 +1381,9 @@ font-weight: none;
                       </item>
                       <item>
                        <widget class="QComboBox" name="secondChannel">
+                        <property name="toolTip">
+                         <string>If &lt;em&gt;cytoplasm&lt;/em&gt; model is chosen, and you also have a nuclear channel, then choose the nuclear channel for this option.</string>
+                        </property>
                         <item>
                          <property name="text">
                           <string>0: None</string>
@@ -1395,6 +1412,9 @@ font-weight: none;
                      <layout class="QHBoxLayout" name="horizontalLayout_15">
                       <item>
                        <widget class="QLabel" name="label_18">
+                        <property name="toolTip">
+                         <string>Threshold on flow error to accept a mask (set higher to get more cells, e.g. in range from (0.1, 3.0), OR set to 0.0 to turn off so no cells discarded)</string>
+                        </property>
                         <property name="text">
                          <string>Flow Threshold:</string>
                         </property>
@@ -1402,6 +1422,9 @@ font-weight: none;
                       </item>
                       <item>
                        <widget class="QDoubleSpinBox" name="flowThresholdValue">
+                        <property name="toolTip">
+                         <string>Threshold on cell probability output to seed cell masks (set lower to include more pixels or higher to include fewer, e.g. in range from (-6, 6))</string>
+                        </property>
                         <property name="singleStep">
                          <double>0.500000000000000</double>
                         </property>
@@ -1416,6 +1439,9 @@ font-weight: none;
                       </property>
                       <item>
                        <widget class="QLabel" name="label_19">
+                        <property name="toolTip">
+                         <string>Threshold on cell probability output to seed cell masks (set lower to include more pixels or higher to include fewer, e.g. in range from (-6, 6))</string>
+                        </property>
                         <property name="text">
                          <string>Cellprob Threshold:</string>
                         </property>
@@ -1423,6 +1449,9 @@ font-weight: none;
                       </item>
                       <item>
                        <widget class="QDoubleSpinBox" name="cellprobThresholdValue">
+                        <property name="toolTip">
+                         <string>Threshold on cell probability output to seed cell masks (set lower to include more pixels or higher to include fewer, e.g. in range from (-6, 6))</string>
+                        </property>
                         <property name="singleStep">
                          <double>0.500000000000000</double>
                         </property>
@@ -1443,6 +1472,9 @@ font-weight: none;
                       </property>
                       <item>
                        <widget class="QLabel" name="label_20">
+                        <property name="toolTip">
+                         <string>For 3D volumes, turn on stitch_threshold to stitch masks across planes instead of running in 3D</string>
+                        </property>
                         <property name="text">
                          <string>Stitch Threshold:</string>
                         </property>
@@ -1450,6 +1482,9 @@ font-weight: none;
                       </item>
                       <item>
                        <widget class="QDoubleSpinBox" name="stitchThresholdValue">
+                        <property name="toolTip">
+                         <string>For 3D volumes, turn on stitch_threshold to stitch masks across planes instead of running in 3D</string>
+                        </property>
                         <property name="singleStep">
                          <double>0.500000000000000</double>
                         </property>
@@ -1562,10 +1597,13 @@ font-size: 18px;
                       <property name="text">
                        <string>Auto-Adjust</string>
                       </property>
+                      <property name="checked">
+                       <bool>true</bool>
+                      </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QSlider" name="imageSaturationSlider">
+                     <widget class="QRangeSlider" name="imageSaturationSlider">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
@@ -1577,6 +1615,9 @@ font-size: 18px;
                       </property>
                       <property name="tickPosition">
                        <enum>QSlider::TicksBelow</enum>
+                      </property>
+                      <property name="tickInterval">
+                       <number>5</number>
                       </property>
                      </widget>
                     </item>
@@ -1871,6 +1912,11 @@ font-size: 18px;
    <extends>QFrame</extends>
    <header>segmentation_screen.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QRangeSlider</class>
+   <extends>QSlider</extends>
+   <header>superqt.h</header>
   </customwidget>
  </customwidgets>
  <resources>

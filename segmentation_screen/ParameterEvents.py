@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Events(Enum):
+class ParameterEvents(Enum):
     IMAGE_SELECTED = "IMAGE_SELECTED"
     GRADXY_SELECTED = "GRADXY_SELECTED"
     CELLPROB_SELECTED = "CELLPROB_SELECTED"
