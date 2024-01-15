@@ -26,6 +26,7 @@ class EventHandler(QtCore.QObject):
         self.auto_adjust = True
         self.saturation_value_min = 0
         self.saturation_value_max = 0
+        self.current_view = 0  # 0 = image, 1 = flowsXY, 2 = flowsZ, 3 = cellProb
 
     def add_event_listener(self, name, func):
         if name not in self._events:

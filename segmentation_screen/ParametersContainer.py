@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QFrame, QComboBox, QProgressBar, QRadioButton, QCheckBox, QDoubleSpinBox, QPushButton, \
     QLabel, QSlider
+from iconify.qt import QtCore
 from superqt import QRangeSlider
 
 from segmentation_screen import EventHandler, DisplayEvents
@@ -118,22 +119,74 @@ class ParametersContainer(QFrame):
         self.model_QComboBox.currentIndexChanged.connect(self.update_value_for_current_model)
         self.firstChannel_QComboBox.currentIndexChanged.connect(self.update_value_for_first_channel)
         self.secondChannel_QComboBox.currentIndexChanged.connect(self.update_value_for_second_channel)
+        self.flowThresholdValue_QDoubleSpinBox.valueChanged.connect(self.update_for_flow_threshold_change)
+        self.cellprobThresholdValue_QDoubleSpinBox.valueChanged.connect(self.update_for_cellprob_change)
 
         # Events from DisplayContainer
         EventHandler().add_event_listener(DisplayEvents.AUTO_ADJUST_SATURATION_SLIDER, self.adjust_max_min_values_for_slider)
         EventHandler().add_event_listener(DisplayEvents.CALIBRATED_FOR_CELL_DIAMETER, self.update_cell_diameter)
+        EventHandler().add_event_listener(DisplayEvents.FINISHED_SEGMENTATION, self.update_parameters_for_segmentation)
+        EventHandler().add_event_listener(DisplayEvents.RESET_FOR_NEW_IMAGE, )
 
     def setup_events_for_buttons(self):
-        self.image_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.IMAGE_SELECTED))
-        self.gradXY_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.GRADXY_SELECTED))
-        self.cellProb_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.CELLPROB_SELECTED))
-        self.gradZ_QRadioButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.GRADZ_SELECTED))
-        self.masksOnCheck_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(ParameterEvents.MASKS_ON_TOGGLED))
-        self.outlinesOnCheck_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(ParameterEvents.OUTLINES_ON_TOGGLED))
+        self.image_QRadioButton.clicked.connect(lambda: self.update_view_and_event_for_image_selected())
+        self.gradXY_QRadioButton.clicked.connect(lambda: self.update_view_and_event_for_gradXY_selected())
+        self.cellProb_QRadioButton.clicked.connect(lambda: self.update_view_and_event_for_cellProb_selected())
+        self.gradZ_QRadioButton.clicked.connect(lambda: self.update_view_and_event_for_gradZ_selected())
+        self.masksOnCheck_QCheckBox.toggled.connect(lambda: self.handle_event_for_toggled_mask())
+        self.outlinesOnCheck_QCheckBox.toggled.connect(lambda: self.handle_event_for_toggled_outlines())
         self.calibrateButton_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.CALIBRATE_PRESSED))
         self.runModel_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.RUN_MODEL_PRESSED))
         self.autoAdjustImageSaturation_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(ParameterEvents.AUTO_ADJUST_TOGGLED))
         self.imageSaturationSlider_QRangeSlider.valueChanged.connect(lambda: self.handle_saturation_value_adjusted())
+
+    def reset_for_new_image(self):
+        self.roiLabel_QLabel.setText(f"{EventHandler().rois} ROIs")
+        self.progressBarModel_QProgressBar.setValue(0)
+        
+
+    def update_view_and_event_for_image_selected(self):
+        EventHandler().current_view = 0
+        EventHandler().dispatch_event(ParameterEvents.IMAGE_SELECTED)
+
+    def update_view_and_event_for_gradXY_selected(self):
+        EventHandler().current_view = 1
+        EventHandler().dispatch_event(ParameterEvents.GRADXY_SELECTED)
+    def update_view_and_event_for_cellProb_selected(self):
+        EventHandler().current_view = 2
+        EventHandler().dispatch_event(ParameterEvents.CELLPROB_SELECTED)
+
+    def update_view_and_event_for_gradZ_selected(self):
+        EventHandler().current_view = 3
+        EventHandler().dispatch_event(ParameterEvents.GRADZ_SELECTED)
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_X:
+            if self.masksOnCheck_QCheckBox.isChecked():
+                self.masksOnCheck_QCheckBox.setChecked(False)
+            else:
+                self.masksOnCheck_QCheckBox.setChecked(True)
+            self.handle_event_for_toggled_mask()
+        elif event.key() == QtCore.Qt.Key_Z:
+            if self.outlinesOnCheck_QCheckBox.isChecked():
+                self.outlinesOnCheck_QCheckBox.setChecked(False)
+            else:
+                self.outlinesOnCheck_QCheckBox.setChecked(True)
+            self.handle_event_for_toggled_outlines()
+
+    def handle_event_for_toggled_mask(self):
+        EventHandler().masks_on = self.masksOnCheck_QCheckBox.isChecked()
+        EventHandler().dispatch_event(ParameterEvents.MASKS_ON_TOGGLED)
+
+    def handle_event_for_toggled_outlines(self):
+        EventHandler().outlines_on = self.outlinesOnCheck_QCheckBox.isChecked()
+        EventHandler().dispatch_event(ParameterEvents.OUTLINES_ON_TOGGLED)
+
+    def update_for_cellprob_change(self):
+        EventHandler().cellprob_threshold = self.cellprobThresholdValue_QDoubleSpinBox.value()
+
+    def update_for_flow_threshold_change(self):
+        EventHandler().flow_threshold = self.flowThresholdValue_QDoubleSpinBox.value()
 
     def handle_saturation_value_adjusted(self):
         sval = self.imageSaturationSlider_QRangeSlider.value()
@@ -155,3 +208,8 @@ class ParametersContainer(QFrame):
 
     def adjust_max_min_values_for_slider(self):
         self.imageSaturationSlider_QRangeSlider.setValue([EventHandler().saturation_value_min, EventHandler().saturation_value_max])
+
+    def update_parameters_for_segmentation(self):
+        self.roiLabel_QLabel.setText(f"{EventHandler().rois} ROIs")
+        self.progressBarModel_QProgressBar.setValue(100)
+        self.masksOnCheck_QCheckBox.setChecked(True)

@@ -1,6 +1,10 @@
 import datetime
 import os
 import gc
+import time
+
+import cv2
+import fastremap
 from tqdm import trange
 import numpy as np
 import pyqtgraph as pg
@@ -8,6 +12,8 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout, QFileDialog
 from cellpose.io import imread
 from cellpose.plot import disk
 from cellpose import models
+from cellpose import utils
+from cellpose.transforms import normalize99, resize_image
 from qtpy import QtCore
 
 from segmentation_screen import EventHandler, make_spectral, make_cmap
@@ -22,6 +28,7 @@ class DisplayContainer(QFrame):
 
     def __init__(self, parent=None):
         super(DisplayContainer, self).__init__(parent)
+        self.layer_off = False
         self.model = None
         self.current_model_path = None
         self.current_model = None
@@ -66,6 +73,8 @@ class DisplayContainer(QFrame):
         self.removing_cells_list = []
         self.removing_region = False
         self.remove_roi_object = None
+        self.cell_colors = np.array([255, 255, 255])[np.newaxis, :]
+        self.strokes = []
 
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -178,22 +187,46 @@ class DisplayContainer(QFrame):
             print('mouse moved')
 
     def image_selected(self):
-        print('IMAGE_SELECTED EVENT!')
+        self.update_view_from_radio_buttons()
 
     def gradxy_selected(self):
-        print('GRADXY_SELECTED EVENT!')
+        self.update_view_from_radio_buttons()
 
     def cellprob_selected(self):
-        print('CELLPROB_SELECTED EVENT!')
+        self.update_view_from_radio_buttons()
 
     def gradz_selected(self):
-        print('GRADZ_SELECTED EVENT!')
+        self.update_view_from_radio_buttons()
+
+    def update_view_from_radio_buttons(self):
+        self.view = EventHandler().current_view
+        if self.loaded:
+            self.update_plot()
 
     def handle_masks_toggled(self):
+        self.remove_or_add_masks_and_outlines()
         print(ParameterEvents.MASKS_ON_TOGGLED)
 
     def handle_outlines_toggled(self):
+        self.remove_or_add_masks_and_outlines()
         print(ParameterEvents.OUTLINES_ON_TOGGLED)
+
+    def remove_or_add_masks_and_outlines(self):
+        print(EventHandler().masks_on, EventHandler().outlines_on)
+        if not EventHandler().masks_on and not EventHandler().outlines_on:
+            print('GUI_INFO: REMOVING A LAYER INSIDE OF HERE')
+            self.cursorCross.removeItem(self.layer)
+            self.layer_off = True
+        else:
+            if self.layer_off:
+                print('GUI_INFO: Adding back the layer')
+                self.cursorCross.addItem(self.layer)
+            self.draw_layer()
+            self.update_layer()
+        if self.loaded:
+            print('GUI_INFO: Updating for toggling outlines and masks')
+            self.update_plot()
+            self.update_layer()
 
     def handle_calibration_button(self):
         self.initialize_model(model_name='cyto')
@@ -210,6 +243,18 @@ class DisplayContainer(QFrame):
         if self.current_model == 'nuclei':
             channels[1] = 0
         return channels
+
+    def get_thresholds(self):
+        try:
+            flow_thresholds = float(EventHandler().flow_threshold)
+            cellprob_thresholds = float(EventHandler().cellprob_threshold)
+            if flow_thresholds == 0.0 or self.NZ < 1:
+                flow_thresholds = None
+            return flow_thresholds, cellprob_thresholds
+        except Exception as e:
+            print('Flow Threshold or Cellprob Threshold not a valid number, setting to defaults')
+            # TODO: trigger an event to reset the values in the ParametersContainer
+            return 0.4, 0.0
 
     def initialize_model(self, model_name=None):
         if model_name is None and not isinstance(model_name, str):
@@ -231,10 +276,153 @@ class DisplayContainer(QFrame):
         self.current_model_path = os.fspath(models.MODEL_DIR.joinpath(self.current_model))
 
     def handle_run_model_pressed(self):
+        self.compute_model()
+        EventHandler().dispatch_event(DisplayEvents.FINISHED_SEGMENTATION)
         print(ParameterEvents.RUN_MODEL_PRESSED)
 
     def handle_auto_adjust_toggled(self):
         print(ParameterEvents.AUTO_ADJUST_TOGGLED)
+
+    def compute_model(self):
+        # set progress bar to 0
+        try:
+            tic = time.time()
+            self.clear_all()
+            self.flows = [[], [], []]
+            print('INITIALIZING MODEL CORRECTLY')
+            self.initialize_model(EventHandler().current_model)
+            print('NEVER WAS ABLE TO INITIALIZE MODEL CORRECTLY')
+            do_3D = False
+            stitch_threshold = False
+            if self.NZ > 1:
+                stitch_threshold = float(EventHandler().stitch_threshold)
+                print('GUI_INFO: Computing model for 3D with stitch threshold', stitch_threshold)
+                stitch_threshold = 0 if stitch_threshold <= 0 or stitch_threshold > 1 else stitch_threshold
+                do_3D = True if stitch_threshold == 0 else False
+                data = self.stack.copy()
+            else:
+                data = self.stack[0].copy()
+            channels = self.get_channels()
+            flow_threshold, cellprob_threshold = self.get_thresholds()
+            cell_diameter = float(EventHandler().cell_diameter)
+            try:
+                masks, flows = self.model.eval(data,
+                                               channels=channels,
+                                               diameter=cell_diameter,
+                                               cellprob_threshold=cellprob_threshold,
+                                               flow_threshold=flow_threshold,
+                                               do_3D=do_3D,
+                                               stitch_threshold=stitch_threshold,
+                                               progress=None)[:2]
+            except Exception as e:
+                print('NET ERROR: %s' % e)
+                # set progress bar to value of 0
+                return
+
+            # TODO: set progress bar to 75
+            self.flows[0] = flows[0].copy()
+            self.flows[1] = (np.clip(normalize99(flows[2].copy()), 0, 1) * 255).astype(np.uint8)  # dist/prob
+            if not do_3D and not stitch_threshold > 0:
+                masks = masks[np.newaxis, ...]
+                self.flows[0] = resize_image(self.flows[0], masks.shape[-2], masks.shape[-1],
+                                             interpolation=cv2.INTER_NEAREST)
+                self.flows[1] = resize_image(self.flows[1], masks.shape[-2], masks.shape[-1])
+            if not do_3D and not stitch_threshold > 0:
+                self.flows[2] = np.zeros(masks.shape[1:], dtype=np.uint8)
+                self.flows = [self.flows[n][np.newaxis, ...] for n in range(len(self.flows))]
+            else:
+                self.flows[2] = (flows[1][0] / 10 * 127 + 127).astype(np.uint8)
+            if len(flows) > 2:
+                self.flows.append(flows[3].squeeze())  # p
+                self.flows.append(np.concatenate((flows[1], flows[2][np.newaxis, ...]), axis=0))  # dP, dist/prob
+            print('%d cells found with model in %0.3f sec' % (len(np.unique(masks)[1:]), time.time() - tic))
+            # set progress bar to 80
+            # turn on masks
+            EventHandler().masks_on = True
+            # set progress to 100 after
+
+            if not do_3D and not stitch_threshold > 0:
+                self.recompute_masks = True
+            else:
+                self.recompute_masks = False
+
+            self.masks_to_gui(masks, outlines=None)
+        except Exception as e:
+            print('ERROR IN COMPUTE_MODEL')
+            print('ERROR: %s' % e)
+
+    def masks_to_gui(self, masks, outlines=None):
+        """ masks loaded into GUI """
+        shape = masks.shape
+        masks = masks.flatten()
+        fastremap.renumber(masks, in_place=True)
+        masks = masks.reshape(shape)
+        masks = masks.astype(np.uint16) if masks.max() < 2 ** 16 - 1 else masks.astype(np.uint32)
+        self.cell_pixel = masks
+        if self.cell_pixel.ndim == 2:
+            self.cell_pixel = self.cell_pixel[np.newaxis, :, :]
+        print(f'GUI_INFO: {masks.max()} masks found')
+
+        # get outlines
+        if outlines is None:  # parent.outlinesOn
+            self.out_pixel = np.zeros_like(masks)
+            for z in range(self.NZ):
+                print('GUI_INFO: Creating the outlines for the mask')
+                outlines = utils.masks_to_outlines(masks[z])
+                self.out_pixel[z] = outlines * masks[z]
+                if z % 50 == 0 and self.NZ > 1:
+                    print('GUI_INFO: plane %d outlines processed' % z)
+        else:
+            self.out_pixel = outlines
+            shape = self.out_pixel.shape
+            _, self.out_pixel = np.unique(self.out_pixel, return_inverse=True)
+            self.out_pixel = np.reshape(self.out_pixel, shape)
+
+        EventHandler().rois = self.cell_pixel.max()
+        colors = self.colormap[:EventHandler().rois, :3]
+        print('GUI_INFO: creating cell colors and drawing masks')
+        self.cell_colors = np.concatenate((np.array([[255, 255, 255]]), colors), axis=0).astype(np.uint8)
+        print('GUI_INFO: In the process of drawing a new layer')
+        self.draw_layer()
+        print('GUI_INFO: Failing to draw this new layer')
+
+        self.update_layer()
+        self.update_plot()
+
+    def draw_layer(self):
+        if EventHandler().masks_on:
+            self.layerz = np.zeros((self.Ly, self.Lx, 4), np.uint8)
+            self.layerz[..., :3] = self.cell_colors[self.cell_pixel[self.currentZ], :]
+            self.layerz[..., 3] = self.opacity * (self.cell_pixel[self.currentZ] > 0).astype(np.uint8)
+            if EventHandler().image_mode > 0:
+                self.layerz[self.cell_pixel[self.currentZ] == EventHandler().image_mode] = np.array(
+                    [255, 255, 255, self.opacity])
+            cZ = self.currentZ
+            stroke_z = np.array([s[0][0] for s in self.strokes])
+            inZ = np.nonzero(stroke_z == cZ)[0]
+            if len(inZ) > 0:
+                for i in inZ:
+                    stroke = np.array(self.strokes[i])
+                    self.layerz[stroke[:, 1], stroke[:, 2]] = np.array([255, 0, 255, 100])
+        else:
+            self.layerz[..., 3] = 0
+
+        if EventHandler().outlines_on:
+            self.layerz[self.out_pixel[self.currentZ] > 0] = np.array(self.out_color).astype(np.uint8)
+
+    def clear_all(self):
+        EventHandler().image_mode = 0
+        self.layerz = 0 * np.ones((self.Ly, self.Lx, 4), np.uint8)
+        self.cell_pixel = np.zeros((self.NZ, self.Ly, self.Lx), np.uint32)
+        self.out_pixel = np.zeros((self.NZ, self.Ly, self.Lx), np.uint32)
+        self.cell_colors = np.array([255, 255, 255])[np.newaxis, :]
+        EventHandler().number_of_cells = 0
+        self.update_layer()
+
+    def update_layer(self):
+        if EventHandler().masks_on or EventHandler().outlines_on:
+            self.layer.setImage(self.layerz, autoLevels=False)
+        self.win.show()
 
     def handle_saturation_slider_adjusted(self):
         min_saturation = EventHandler().saturation_value_min
@@ -284,8 +472,32 @@ class DisplayContainer(QFrame):
 
         if self.loaded:
             self.filename = filename
+            self.reset()
+            EventHandler().dispatch_event(DisplayEvents.RESET_FOR_NEW_IMAGE)
             print('GUI_INFO: filename info:', self.filename)
             self.initialize_images(image)
+            self.clear_all()
+            self.loaded = True
+
+    def reset(self):
+        self.one_channel = False
+        self.loaded = False
+        self.strokes = []
+        EventHandler().rois = 0
+        self.cell_colors = np.array([255, 255, 255])[np.newaxis, :]
+        # -- set menus to default -- #
+        EventHandler().current_view = 0
+        self.opacity = 128  # how opaque masks should be
+        self.out_color = [200, 200, 255, 200]
+        self.NZ, self.Ly, self.Lx = 1, 512, 512
+        self.saturation = [[0, 255] for _ in range(self.NZ)]
+        self.currentZ = 0
+        self.layerz = 0*np.ones((self.Ly, self.Lx, 4), np.uint8)
+        self.cell_pixel = np.zeros((1, self.Ly, self.Lx), np.uint32)
+        self.out_pixel = np.zeros((1, self.Ly, self.Lx), np.uint32)
+        self.update_plot()
+        self.filename = []
+        self.recompute_masks = False
 
     def initialize_images(self, image):
         """ format image for GUI """
