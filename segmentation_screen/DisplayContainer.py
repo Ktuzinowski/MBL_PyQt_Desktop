@@ -289,9 +289,8 @@ class DisplayContainer(QFrame):
             tic = time.time()
             self.clear_all()
             self.flows = [[], [], []]
-            print('INITIALIZING MODEL CORRECTLY')
             self.initialize_model(EventHandler().current_model)
-            print('NEVER WAS ABLE TO INITIALIZE MODEL CORRECTLY')
+            print('GUI_INFO: INITIALIZING MODEL CORRECTLY')
             do_3D = False
             stitch_threshold = False
             if self.NZ > 1:
@@ -382,10 +381,7 @@ class DisplayContainer(QFrame):
         colors = self.colormap[:EventHandler().rois, :3]
         print('GUI_INFO: creating cell colors and drawing masks')
         self.cell_colors = np.concatenate((np.array([[255, 255, 255]]), colors), axis=0).astype(np.uint8)
-        print('GUI_INFO: In the process of drawing a new layer')
         self.draw_layer()
-        print('GUI_INFO: Failing to draw this new layer')
-
         self.update_layer()
         self.update_plot()
 
