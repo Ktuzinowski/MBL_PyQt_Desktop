@@ -633,7 +633,7 @@ class Ui_MainWindow(object):
         self.label_18.setObjectName("label_18")
         self.horizontalLayout_15.addWidget(self.label_18)
         self.flowThresholdValue = QtWidgets.QDoubleSpinBox(self.frame_15)
-        self.flowThresholdValue.setMinimum(0.1)
+        self.flowThresholdValue.setMinimum(0.0)
         self.flowThresholdValue.setMaximum(3.0)
         self.flowThresholdValue.setSingleStep(0.5)
         self.flowThresholdValue.setObjectName("flowThresholdValue")

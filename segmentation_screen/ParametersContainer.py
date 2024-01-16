@@ -126,7 +126,7 @@ class ParametersContainer(QFrame):
         EventHandler().add_event_listener(DisplayEvents.AUTO_ADJUST_SATURATION_SLIDER, self.adjust_max_min_values_for_slider)
         EventHandler().add_event_listener(DisplayEvents.CALIBRATED_FOR_CELL_DIAMETER, self.update_cell_diameter)
         EventHandler().add_event_listener(DisplayEvents.FINISHED_SEGMENTATION, self.update_parameters_for_segmentation)
-        EventHandler().add_event_listener(DisplayEvents.RESET_FOR_NEW_IMAGE, )
+        EventHandler().add_event_listener(DisplayEvents.RESET_FOR_NEW_IMAGE, self.reset_for_new_image)
 
     def setup_events_for_buttons(self):
         self.image_QRadioButton.clicked.connect(lambda: self.update_view_and_event_for_image_selected())
@@ -143,7 +143,6 @@ class ParametersContainer(QFrame):
     def reset_for_new_image(self):
         self.roiLabel_QLabel.setText(f"{EventHandler().rois} ROIs")
         self.progressBarModel_QProgressBar.setValue(0)
-        
 
     def update_view_and_event_for_image_selected(self):
         EventHandler().current_view = 0
