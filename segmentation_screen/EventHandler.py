@@ -13,6 +13,8 @@ class EventHandler(QtCore.QObject):
         self.masks_on = True
         self.outlines_on = False
         self.cell_diameter = 30.0
+        self.minimum_cell_diameter = 0.0
+        self.maximum_cell_diameter = 60.0
         self.current_model: Models = Models.CYTO2
         self.first_channel: Channels = Channels.GRAY
         self.second_channel: Channels = Channels.NONE

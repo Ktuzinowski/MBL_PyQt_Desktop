@@ -28,6 +28,11 @@ class DisplayContainer(QFrame):
 
     def __init__(self, parent=None):
         super(DisplayContainer, self).__init__(parent)
+        # Original masks to base off of
+        self.masks = None
+        self.removed_cell = None
+        self.selected = 0
+        self.prev_selected = 0
         self.layer_off = False
         self.model = None
         self.current_model_path = None
@@ -65,7 +70,6 @@ class DisplayContainer(QFrame):
         self.radii = 0 * np.ones((self.Ly, self.Lx, 4), np.uint8)
         self.cell_pixel = np.zeros((1, self.Ly, self.Lx), np.uint32)
         self.out_pixel = np.zeros((1, self.Ly, self.Lx), np.uint32)
-        self.is_manual = np.zeros(0, 'bool')
         self.filename = []
         self.loaded = False
         self.recompute_masks = False
@@ -75,6 +79,7 @@ class DisplayContainer(QFrame):
         self.remove_roi_object = None
         self.cell_colors = np.array([255, 255, 255])[np.newaxis, :]
         self.strokes = []
+        self.track_changes = []
 
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -123,6 +128,7 @@ class DisplayContainer(QFrame):
         EventHandler().add_event_listener(ParameterEvents.AUTO_ADJUST_TOGGLED, self.handle_auto_adjust_toggled)
         EventHandler().add_event_listener(ParameterEvents.SATURATION_SLIDER_ADJUSTED,
                                           self.handle_saturation_slider_adjusted)
+        EventHandler().add_event_listener(ParameterEvents.UPDATE_CALIBRATION_DISK, self.compute_scale)
 
         self.setLayout(main_layout)
 
@@ -344,7 +350,6 @@ class DisplayContainer(QFrame):
                 self.recompute_masks = True
             else:
                 self.recompute_masks = False
-
             self.masks_to_gui(masks, outlines=None)
         except Exception as e:
             print('ERROR IN COMPUTE_MODEL')
@@ -353,11 +358,17 @@ class DisplayContainer(QFrame):
     def masks_to_gui(self, masks, outlines=None):
         """ masks loaded into GUI """
         shape = masks.shape
+        print("Shape of masks", shape)
         masks = masks.flatten()
+        print("Flattened masks", masks)
         fastremap.renumber(masks, in_place=True)
+        print("Renumbered masks in place", masks)
         masks = masks.reshape(shape)
+        print("Reshaped masks back to original shape", masks)
         masks = masks.astype(np.uint16) if masks.max() < 2 ** 16 - 1 else masks.astype(np.uint32)
+        print("Masks after changing type to either 16 or 32 bit", masks)
         self.cell_pixel = masks
+        self.masks = masks
         if self.cell_pixel.ndim == 2:
             self.cell_pixel = self.cell_pixel[np.newaxis, :, :]
         print(f'GUI_INFO: {masks.max()} masks found')
@@ -381,6 +392,8 @@ class DisplayContainer(QFrame):
         colors = self.colormap[:EventHandler().rois, :3]
         print('GUI_INFO: creating cell colors and drawing masks')
         self.cell_colors = np.concatenate((np.array([[255, 255, 255]]), colors), axis=0).astype(np.uint8)
+        self.remove_masks_that_do_not_fall_in_range()
+        np.save('masks_file.npy', self.cell_pixel)
         self.draw_layer()
         self.update_layer()
         self.update_plot()
@@ -622,3 +635,76 @@ class DisplayContainer(QFrame):
             EventHandler().dispatch_event(DisplayEvents.AUTO_ADJUST_SATURATION_SLIDER)
             self.saturation.append([np.percentile(self.stack[n].astype(np.float32), 1),
                                     np.percentile(self.stack[n].astype(np.float32), 99)])
+
+    def select_cell(self, idx):
+        self.prev_selected = self.selected
+        self.selected = idx
+        if self.selected > 0:
+            z = self.currentZ
+            self.layerz[self.cell_pixel[z] == idx] = np.array([255, 255, 255, self.opacity])
+            self.update_layer()
+
+    def unselect_cell(self):
+        if self.selected > 0:
+            idx = self.selected
+            if idx < EventHandler().rois + 1:
+                z = self.currentZ
+                self.layerz[self.cell_pixel[z] == idx] = np.append(self.cell_colors[idx], self.opacity)
+                if EventHandler().outlines_on:
+                    self.layerz[self.out_pixel[z] == idx] = np.array(self.out_color).astype(np.uint8)
+                self.update_layer()
+        self.selected = 0
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Delete:
+            if self.selected > 0:
+                self.remove_single_cell(self.selected)
+                EventHandler().rois -= 1
+                self.update_layer()
+                EventHandler().dispatch_event(DisplayEvents.REMOVED_ROI)
+
+    def remove_single_cell(self, idx):
+        # remove from manual array
+        self.selected = 0
+        if self.NZ > 1:
+            zextent = ((self.cell_pixel == idx).sum(axis=(1, 2)) > 0).nonzero()[0]
+        else:
+            zextent = [0]
+        for z in zextent:
+            cp = self.cell_pixel[z] == idx
+            op = self.out_pixel[z] == idx
+            # remove from self.cell_pixel and self.out_pixel
+            self.cell_pixel[z, cp] = 0
+            self.out_pixel[z, op] = 0
+            if z == self.currentZ:
+                # remove from mask layer
+                self.layerz[cp] = np.array([0, 0, 0, 0])
+
+            # reduce other pixels by -1
+            # self.cell_pixel[self.cell_pixel > idx] -= 1
+            # self.out_pixel[self.out_pixel > idx] -= 1
+
+            # remove cell from lists
+            # self.cell_colors = np.delete(self.cell_colors, [idx], axis=0)
+            print('GUI_INFO: removed cell %d' % (idx - 1))
+
+    def remove_masks_that_do_not_fall_in_range(self):
+        roi_numbers, _ = np.unique(np.int32(self.cell_pixel), return_counts=True)
+        roi_numbers = roi_numbers[1:]
+        z = 0
+
+        counter = 0
+        number_of_removed_rois = 0
+        for _ in range(len(roi_numbers)):
+            counter += 1
+            count_for_number = np.sum(self.cell_pixel == counter)
+            count_for_number = (count_for_number**0.5) / ((np.pi**0.5)/2)
+
+            if count_for_number < EventHandler().minimum_cell_diameter or count_for_number > EventHandler().maximum_cell_diameter:
+                cp = self.cell_pixel[z] == counter
+                op = self.out_pixel[z] == counter
+                self.cell_pixel[z, cp] = 0
+                self.out_pixel[z, op] = 0
+
+                number_of_removed_rois += 1
+        EventHandler().rois -= number_of_removed_rois

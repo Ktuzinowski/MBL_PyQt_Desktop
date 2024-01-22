@@ -23,6 +23,8 @@ class ParametersContainer(QFrame):
 
         self.calibrationValue_QDoubleSpinBox: QDoubleSpinBox = None
         self.calibrateButton_QPushButton: QPushButton = None
+        self.minimumCellDiameterValue_QDoubleSpinBox = None
+        self.maximumCellDiameterValue_QDoubleSpinBox = None
 
         self.firstChannel_QComboBox: QComboBox = None
         self.secondChannel_QComboBox: QComboBox = None
@@ -70,6 +72,13 @@ class ParametersContainer(QFrame):
         self.calibrateButton_QPushButton = self.findChild(QPushButton, "calibrateButton")
         if self.calibrateButton_QPushButton is None:
             print('GUI_INFO: Failed to get the calibrateButton_QPushButton')
+
+        self.minimumCellDiameterValue_QDoubleSpinBox = self.findChild(QDoubleSpinBox, "minimum_cell_diameter")
+        if self.minimumCellDiameterValue_QDoubleSpinBox is None:
+            print('GUI_INFO: Failed to get the minimumCellDiameterValue_QDoubleSpinBox')
+        self.maximumCellDiameterValue_QDoubleSpinBox = self.findChild(QDoubleSpinBox, "maximum_cell_diameter")
+        if self.maximumCellDiameterValue_QDoubleSpinBox is None:
+            print('GUI_INFO: Failed to get the minimumCellDiameterValue_QDoubleSpinBox')
 
         self.firstChannel_QComboBox = self.findChild(QComboBox, "firstChannel")
         if self.firstChannel_QComboBox is None:
@@ -121,12 +130,17 @@ class ParametersContainer(QFrame):
         self.secondChannel_QComboBox.currentIndexChanged.connect(self.update_value_for_second_channel)
         self.flowThresholdValue_QDoubleSpinBox.valueChanged.connect(self.update_for_flow_threshold_change)
         self.cellprobThresholdValue_QDoubleSpinBox.valueChanged.connect(self.update_for_cellprob_change)
+        self.calibrationValue_QDoubleSpinBox.editingFinished.connect(self.handle_calibration_editing_finished)
+        self.minimumCellDiameterValue_QDoubleSpinBox.valueChanged.connect(self.update_minimum_cell_diameter)
+        self.maximumCellDiameterValue_QDoubleSpinBox.valueChanged.connect(self.update_maximum_cell_diameter)
 
         # Events from DisplayContainer
-        EventHandler().add_event_listener(DisplayEvents.AUTO_ADJUST_SATURATION_SLIDER, self.adjust_max_min_values_for_slider)
+        EventHandler().add_event_listener(DisplayEvents.AUTO_ADJUST_SATURATION_SLIDER,
+                                          self.adjust_max_min_values_for_slider)
         EventHandler().add_event_listener(DisplayEvents.CALIBRATED_FOR_CELL_DIAMETER, self.update_cell_diameter)
         EventHandler().add_event_listener(DisplayEvents.FINISHED_SEGMENTATION, self.update_parameters_for_segmentation)
         EventHandler().add_event_listener(DisplayEvents.RESET_FOR_NEW_IMAGE, self.reset_for_new_image)
+        EventHandler().add_event_listener(DisplayEvents.REMOVED_ROI, self.update_rois_for_cell_deletion)
 
     def setup_events_for_buttons(self):
         self.image_QRadioButton.clicked.connect(lambda: self.update_view_and_event_for_image_selected())
@@ -135,9 +149,12 @@ class ParametersContainer(QFrame):
         self.gradZ_QRadioButton.clicked.connect(lambda: self.update_view_and_event_for_gradZ_selected())
         self.masksOnCheck_QCheckBox.toggled.connect(lambda: self.handle_event_for_toggled_mask())
         self.outlinesOnCheck_QCheckBox.toggled.connect(lambda: self.handle_event_for_toggled_outlines())
-        self.calibrateButton_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.CALIBRATE_PRESSED))
-        self.runModel_QPushButton.clicked.connect(lambda: EventHandler().dispatch_event(ParameterEvents.RUN_MODEL_PRESSED))
-        self.autoAdjustImageSaturation_QCheckBox.toggled.connect(lambda: EventHandler().dispatch_event(ParameterEvents.AUTO_ADJUST_TOGGLED))
+        self.calibrateButton_QPushButton.clicked.connect(
+            lambda: EventHandler().dispatch_event(ParameterEvents.CALIBRATE_PRESSED))
+        self.runModel_QPushButton.clicked.connect(
+            lambda: EventHandler().dispatch_event(ParameterEvents.RUN_MODEL_PRESSED))
+        self.autoAdjustImageSaturation_QCheckBox.toggled.connect(
+            lambda: EventHandler().dispatch_event(ParameterEvents.AUTO_ADJUST_TOGGLED))
         self.imageSaturationSlider_QRangeSlider.valueChanged.connect(lambda: self.handle_saturation_value_adjusted())
 
     def reset_for_new_image(self):
@@ -151,6 +168,7 @@ class ParametersContainer(QFrame):
     def update_view_and_event_for_gradXY_selected(self):
         EventHandler().current_view = 1
         EventHandler().dispatch_event(ParameterEvents.GRADXY_SELECTED)
+
     def update_view_and_event_for_cellProb_selected(self):
         EventHandler().current_view = 2
         EventHandler().dispatch_event(ParameterEvents.CELLPROB_SELECTED)
@@ -206,9 +224,23 @@ class ParametersContainer(QFrame):
         self.calibrationValue_QDoubleSpinBox.setValue(EventHandler().cell_diameter)
 
     def adjust_max_min_values_for_slider(self):
-        self.imageSaturationSlider_QRangeSlider.setValue([EventHandler().saturation_value_min, EventHandler().saturation_value_max])
+        self.imageSaturationSlider_QRangeSlider.setValue(
+            [EventHandler().saturation_value_min, EventHandler().saturation_value_max])
 
     def update_parameters_for_segmentation(self):
         self.roiLabel_QLabel.setText(f"{EventHandler().rois} ROIs")
         self.progressBarModel_QProgressBar.setValue(100)
         self.masksOnCheck_QCheckBox.setChecked(True)
+
+    def handle_calibration_editing_finished(self):
+        EventHandler().cell_diameter = self.calibrationValue_QDoubleSpinBox.value()
+        EventHandler().dispatch_event(ParameterEvents.UPDATE_CALIBRATION_DISK)
+
+    def update_rois_for_cell_deletion(self):
+        self.roiLabel_QLabel.setText(f"{EventHandler().rois} ROIs")
+
+    def update_minimum_cell_diameter(self):
+        EventHandler().minimum_cell_diameter = self.minimumCellDiameterValue_QDoubleSpinBox.value()
+
+    def update_maximum_cell_diameter(self):
+        EventHandler().maximum_cell_diameter = self.maximumCellDiameterValue_QDoubleSpinBox.value()

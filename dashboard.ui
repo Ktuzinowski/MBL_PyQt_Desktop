@@ -613,8 +613,8 @@ border: none
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>230</width>
-                         <height>940</height>
+                         <width>100</width>
+                         <height>30</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1130,12 +1130,6 @@ padding: 3px;
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_24">
-                    <property name="spacing">
-                     <number>7</number>
-                    </property>
-                    <property name="sizeConstraint">
-                     <enum>QLayout::SetFixedSize</enum>
-                    </property>
                     <property name="leftMargin">
                      <number>0</number>
                     </property>
@@ -1143,10 +1137,10 @@ padding: 3px;
                      <number>0</number>
                     </property>
                     <property name="rightMargin">
-                     <number>10</number>
+                     <number>7</number>
                     </property>
                     <property name="bottomMargin">
-                     <number>10</number>
+                     <number>0</number>
                     </property>
                     <item>
                      <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1218,7 +1212,7 @@ font-size: 18px;
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_21">
                       <property name="bottomMargin">
-                       <number>10</number>
+                       <number>20</number>
                       </property>
                       <item>
                        <widget class="QCheckBox" name="masksOnCheck">
@@ -1285,7 +1279,7 @@ font-weight: none;
                        <enum>QLayout::SetDefaultConstraint</enum>
                       </property>
                       <property name="bottomMargin">
-                       <number>20</number>
+                       <number>0</number>
                       </property>
                       <item>
                        <widget class="QDoubleSpinBox" name="calibrationValue">
@@ -1296,6 +1290,9 @@ The size is represented at the bottom of the view with a purple disk.</string>
                         </property>
                         <property name="styleSheet">
                          <string notr="true"/>
+                        </property>
+                        <property name="maximum">
+                         <double>1000.000000000000000</double>
                         </property>
                         <property name="value">
                          <double>30.000000000000000</double>
@@ -1312,6 +1309,81 @@ The size is represented at the bottom of the view with a purple disk.</string>
                         </property>
                         <property name="text">
                          <string>Calibrate</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_20">
+                      <property name="topMargin">
+                       <number>10</number>
+                      </property>
+                      <item>
+                       <widget class="QLabel" name="label_22">
+                        <property name="toolTip">
+                         <string/>
+                        </property>
+                        <property name="text">
+                         <string>Min Cell Diameter</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="minimum_cell_diameter">
+                        <property name="toolTip">
+                         <string/>
+                        </property>
+                        <property name="minimum">
+                         <double>0.000000000000000</double>
+                        </property>
+                        <property name="maximum">
+                         <double>1000.000000000000000</double>
+                        </property>
+                        <property name="singleStep">
+                         <double>0.500000000000000</double>
+                        </property>
+                        <property name="value">
+                         <double>0.000000000000000</double>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_22">
+                      <property name="topMargin">
+                       <number>10</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>15</number>
+                      </property>
+                      <item>
+                       <widget class="QLabel" name="label_23">
+                        <property name="toolTip">
+                         <string>Threshold on cell probability output to seed cell masks (set lower to include more pixels or higher to include fewer, e.g. in range from (-6, 6))</string>
+                        </property>
+                        <property name="text">
+                         <string>Max Cell Diameter</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="maximum_cell_diameter">
+                        <property name="toolTip">
+                         <string>Threshold on cell probability output to seed cell masks (set lower to include more pixels or higher to include fewer, e.g. in range from (-6, 6))</string>
+                        </property>
+                        <property name="minimum">
+                         <double>0.000000000000000</double>
+                        </property>
+                        <property name="maximum">
+                         <double>1000.000000000000000</double>
+                        </property>
+                        <property name="singleStep">
+                         <double>0.500000000000000</double>
+                        </property>
+                        <property name="value">
+                         <double>60.000000000000000</double>
                         </property>
                        </widget>
                       </item>
@@ -1367,7 +1439,7 @@ The size is represented at the bottom of the view with a purple disk.</string>
                        <number>10</number>
                       </property>
                       <property name="bottomMargin">
-                       <number>20</number>
+                       <number>15</number>
                       </property>
                       <item>
                        <widget class="QLabel" name="chan2">
@@ -1426,7 +1498,7 @@ The size is represented at the bottom of the view with a purple disk.</string>
                          <string>Threshold on flow error to accept a mask (set higher to get more cells, e.g. in range from (0.1, 3.0), OR set to 0.0 to turn off so no cells discarded)</string>
                         </property>
                         <property name="minimum">
-                         <double>0.100000000000000</double>
+                         <double>0.000000000000000</double>
                         </property>
                         <property name="maximum">
                          <double>3.000000000000000</double>
@@ -1480,7 +1552,7 @@ The size is represented at the bottom of the view with a purple disk.</string>
                        <number>10</number>
                       </property>
                       <property name="bottomMargin">
-                       <number>20</number>
+                       <number>15</number>
                       </property>
                       <item>
                        <widget class="QLabel" name="label_20">
@@ -1521,11 +1593,6 @@ The size is represented at the bottom of the view with a purple disk.</string>
                         </item>
                         <item>
                          <property name="text">
-                          <string>Cyto</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
                           <string>Nuclei</string>
                          </property>
                         </item>
@@ -1562,7 +1629,7 @@ The size is represented at the bottom of the view with a purple disk.</string>
                        <number>10</number>
                       </property>
                       <property name="bottomMargin">
-                       <number>30</number>
+                       <number>20</number>
                       </property>
                       <item>
                        <widget class="QProgressBar" name="progressBar">
