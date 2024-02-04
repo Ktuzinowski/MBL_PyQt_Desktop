@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMainWindow
 from protein_screen import SliderForProteinFrame
 from Custom_Widgets.Widgets import *
 from protein_screen import GlobalObject
+from main_screen import MainMenu
 from ui_interface import *
 
 shadow_elements = {
@@ -20,6 +21,9 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        # Set up the main menu for the screen being viewed
+        MainMenu.create_main_menu(self)
 
         # Initially selected screen
         self.ui.percentage_bar_btn.setStyleSheet("""
@@ -55,6 +59,7 @@ class MainWindow(QMainWindow):
 
         GlobalObject().add_event_listener("NEW_DATA", self.update_interface_based_on_data)
         self.ui.plot_button.clicked.connect(lambda: self.update_tsne_graph_event())
+
         # SHOW WINDOW
         self.show()
 

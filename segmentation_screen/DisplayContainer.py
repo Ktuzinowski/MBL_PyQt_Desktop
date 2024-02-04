@@ -22,6 +22,8 @@ from segmentation_screen import DisplayEvents
 from segmentation_screen import ImageDraw
 from segmentation_screen import ViewBoxNoRightDrag
 from segmentation_screen import make_bwr
+from main_screen import SegmentationMenuEvents
+import imageio
 
 
 class DisplayContainer(QFrame):
@@ -130,6 +132,13 @@ class DisplayContainer(QFrame):
                                           self.handle_saturation_slider_adjusted)
         EventHandler().add_event_listener(ParameterEvents.UPDATE_CALIBRATION_DISK, self.compute_scale)
 
+        # Main Menu Events
+        EventHandler().add_event_listener(SegmentationMenuEvents.LOAD_IMAGE, self.handle_segmentation_menu_load_image)
+        EventHandler().add_event_listener(SegmentationMenuEvents.SAVE_MASKS_FOR_MULTILAYER_TIFF, self.handle_segmentation_menu_save_masks_tiff)
+        EventHandler().add_event_listener(SegmentationMenuEvents.SAVE_OUTLINES_FOR_MULTILAYER_TIFF, self.handle_segmentation_menu_save_outlines_tiff)
+        EventHandler().add_event_listener(SegmentationMenuEvents.SAVE_MASKS_AND_OUTLINES_FOR_MULTILAYER_TIFF, self.handle_segmentation_menu_save_masks_and_outlines_tiff)
+        EventHandler().add_event_listener(SegmentationMenuEvents.SAVE_MASKS_ONLY_NPY, self.handle_segmentation_menu_masks_only_npy)
+        EventHandler().add_event_listener(SegmentationMenuEvents.SAVE_OUTLINES_ONLY_NPY, self.handle_segmentation_menu_outlines_only_npy)
         self.setLayout(main_layout)
 
     def make_viewbox(self):
@@ -681,8 +690,8 @@ class DisplayContainer(QFrame):
                 self.layerz[cp] = np.array([0, 0, 0, 0])
 
             # reduce other pixels by -1
-            # self.cell_pixel[self.cell_pixel > idx] -= 1
-            # self.out_pixel[self.out_pixel > idx] -= 1
+            self.cell_pixel[self.cell_pixel > idx] -= 1
+            self.out_pixel[self.out_pixel > idx] -= 1
 
             # remove cell from lists
             # self.cell_colors = np.delete(self.cell_colors, [idx], axis=0)
@@ -706,5 +715,58 @@ class DisplayContainer(QFrame):
                 self.cell_pixel[z, cp] = 0
                 self.out_pixel[z, op] = 0
 
+                self.cell_pixel[self.cell_pixel > counter] -= 1
+                self.out_pixel[self.out_pixel > counter] -= 1
+                counter -= 1
+
                 number_of_removed_rois += 1
         EventHandler().rois -= number_of_removed_rois
+
+    # MAIN MENU METHODS FOR DEALING WITH EVENTS
+    def handle_segmentation_menu_load_image(self):
+        # Open File Dialog
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", ".jpg, .png, .tiff, .tif")
+
+        # Output file_name
+        if file_name:
+            self.load_image(file_name)
+    def handle_segmentation_menu_save_masks_tiff(self):
+        print(SegmentationMenuEvents.SAVE_MASKS_FOR_MULTILAYER_TIFF)
+
+    def handle_segmentation_menu_save_outlines_tiff(self):
+        print(SegmentationMenuEvents.SAVE_OUTLINES_FOR_MULTILAYER_TIFF)
+
+    def handle_segmentation_menu_save_masks_and_outlines_tiff(self):
+        # Create a list of image data for each layer
+        if self.loaded and self.cell_pixel.any() and self.out_pixel.any():
+            # Writing the Masks Part of the Layer Z
+            colormap = ((np.random.rand(1000000, 3) * 0.8 + 0.1) * 255).astype(np.uint8)
+            rois_found = EventHandler().rois
+            opacity = 30
+            colors = colormap[:rois_found, :3]
+            cell_colors = np.concatenate((np.array([[255, 255, 255]]), colors), axis=0).astype(np.uint8)
+            layer_z = np.zeros((self.Ly, self.Lx, 4), np.uint8)
+            layer_z[..., :3] = cell_colors[self.cell_pixel[self.currentZ], :]
+            layer_z[..., 3] = opacity * (self.cell_pixel[self.currentZ] > 0).astype(np.uint8)
+
+            # Writing the Outlines Part of Layer Z
+            self.layerz[self.out_pixel[self.currentZ] > 0] = np.array(self.out_color).astype(np.uint8)
+
+            # Specify the file name for the multi-layered TIFF file
+            file_name, _ = QFileDialog.getSaveFileName(self, "Save Masks and Outlines", "masks_outlines.tiff", "")
+            img = cv2.imread(self.filename)
+            images = [img, layer_z]
+            # Save the multi-layered TIFF file
+            imageio.mimwrite(file_name, images, format='TIFF', bigtiff=False)
+
+    def handle_segmentation_menu_masks_only_npy(self):
+        if self.loaded:
+            if self.cell_pixel.any():
+                file_name, _ = QFileDialog.getSaveFileName(self, "Save Masks .npy", "masks.npy", "")
+                np.save(file_name, self.cell_pixel)
+
+    def handle_segmentation_menu_outlines_only_npy(self):
+        if self.loaded:
+            if self.out_pixel.any():
+                file_name, _ = QFileDialog.getSaveFileName(self, "Save Outlines .npy", "outlines.npy", "")
+                np.save(file_name, self.out_pixel)
