@@ -1,2 +1,5 @@
+from .SegmentationMenuEvents import SegmentationMenuEvents
+from .ProteinMenuEvents import ProteinMenuEvents
 from .LabClickableFrame import LabClickableFrame
 from .GithubClickableFrame import GithubClickableFrame
+from .MainMenu import create_main_menu
