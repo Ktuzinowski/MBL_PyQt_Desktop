@@ -518,7 +518,6 @@ class DisplayContainer(QFrame):
             filename = name[0]
         else:
             print('GUI_INFO: filename is not none')
-            self.filename = filename
         try:
             print(f'GUI_INFO: loading image: {filename}')
             image = self.imread(filename, page)
