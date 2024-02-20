@@ -1,7 +1,9 @@
 import sys
+import argparse
 from PyQt5.QtWidgets import QMainWindow
 from protein_screen import SliderForProteinFrame
 from Custom_Widgets.Widgets import *
+from segmentation_screen import EventHandler
 from protein_screen import GlobalObject
 from main_screen import MainMenu
 from ui_interface import *
@@ -291,6 +293,15 @@ class MainWindow(QMainWindow):
 
 # EXECUTE APP
 if __name__ == "__main__":
+    
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--gpu', default=False,
+                        help='gpu available')
+    args = parser.parse_args()
+
+    if args.gpu:
+        EventHandler().gpu = args.gpu   
+
     app = QApplication(sys.argv)
 
     window = MainWindow()

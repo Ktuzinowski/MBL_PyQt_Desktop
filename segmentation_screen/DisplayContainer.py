@@ -72,7 +72,6 @@ class DisplayContainer(QFrame):
         self.radii = 0 * np.ones((self.Ly, self.Lx, 4), np.uint8)
         self.cell_pixel = np.zeros((1, self.Ly, self.Lx), np.uint32)
         self.out_pixel = np.zeros((1, self.Ly, self.Lx), np.uint32)
-        self.filename = []
         self.loaded = False
         self.recompute_masks = False
         self.deleting_multiple = False
@@ -131,6 +130,7 @@ class DisplayContainer(QFrame):
         EventHandler().add_event_listener(ParameterEvents.SATURATION_SLIDER_ADJUSTED,
                                           self.handle_saturation_slider_adjusted)
         EventHandler().add_event_listener(ParameterEvents.UPDATE_CALIBRATION_DISK, self.compute_scale)
+        EventHandler().add_event_listener(ParameterEvents.UPDATE_PROTEIN_SIGNAL_LAYER, self.handle_protein_signal_layer_change)
 
         # Main Menu Events
         EventHandler().add_event_listener(SegmentationMenuEvents.LOAD_IMAGE, self.handle_segmentation_menu_load_image)
@@ -212,6 +212,10 @@ class DisplayContainer(QFrame):
 
     def gradz_selected(self):
         self.update_view_from_radio_buttons()
+    
+    def handle_protein_signal_layer_change(self):
+        self.load_image(self.filename, page=EventHandler().protein_signal_layer)
+        self.update_plot()
 
     def update_view_from_radio_buttons(self):
         self.view = EventHandler().current_view
@@ -274,15 +278,18 @@ class DisplayContainer(QFrame):
     def initialize_model(self, model_name=None):
         if model_name is None and not isinstance(model_name, str):
             self.get_model_path()
-            self.model = models.CellposeModel(gpu=False, pretrained_model=self.current_model_path)
+            if EventHandler().gpu:
+                self.model = models.CellposeModel(gpu=True, pretrained_model=self.current_model_path)
+            else:
+                self.model = models.CellposeModel(gpu=False, pretrained_model=self.current_model_path)
         else:
             self.current_model = model_name
             if 'cyto' in self.current_model or 'nuclei' in self.current_model:
                 self.current_model_path = models.model_path(self.current_model, 0)
             else:
                 self.current_model_path = os.fspath(models.MODEL_DIR.joinpath(self.current_model))
-            if self.current_model == 'cyto':
-                self.model = models.Cellpose(gpu=False, model_type=self.current_model)
+            if EventHandler().gpu:
+                self.model = models.Cellpose(gpu=True, model_type=self.current_model)
             else:
                 self.model = models.CellposeModel(gpu=False, model_type=self.current_model)
 
@@ -471,7 +478,38 @@ class DisplayContainer(QFrame):
         print(files)
         self.load_image(filename=files[0])
 
-    def load_image(self, filename=None, load_seg=True):
+    def imread(self,filename, page_num=0):
+        """ read in image with tif or image file type supported by cv2 """
+        ext = os.path.splitext(filename)[-1].lower()
+        if ext == ".tif" or ext == ".tiff":
+            import tifffile
+            with tifffile.TiffFile(filename) as tif:
+                ltif = len(tif.pages)
+                EventHandler().pages = ltif
+                try:
+                    full_shape = tif.shaped_metadata[0]["shape"]
+                except:
+                    try:
+                        page = tif.pages[page_num]
+                        full_shape = page.series[0].shape
+                    except:
+                        ltif = 0
+                if ltif < 2:
+                    img = page.asarray()
+                else:
+                    page1 = page.series[0][0]
+                    shape, dtype = page1.shape, page1.dtype
+                    ltif = int(np.prod(full_shape) / np.prod(shape))
+                    print(f"reading tiff with {ltif} planes")
+                    img = np.zeros((ltif, *shape), dtype=dtype)
+                    for i, _ in enumerate(page.series[0]):
+                        img[i] = page.asarray()
+                    img = img.reshape(full_shape)
+        else:
+            img = imread(filename)
+        return img
+
+    def load_image(self, filename=None, page=0, load_seg=True):
         """ load image with filename, if None, open QFileDialog """
         if filename is None:
             name = QFileDialog.getOpenFileName(
@@ -482,15 +520,16 @@ class DisplayContainer(QFrame):
             print('GUI_INFO: filename is not none')
         try:
             print(f'GUI_INFO: loading image: {filename}')
-            image = imread(filename)
+            image = self.imread(filename, page)
             self.loaded = True
+            EventHandler().dispatch_event(DisplayEvents.PROTEIN_SIGNAL_DROPDOWN_UPDATE)
         except Exception as e:
             print('ERROR: images not compatible')
             print(f'ERROR: {e}')
 
         if self.loaded:
-            self.filename = filename
             self.reset()
+            self.filename = filename
             EventHandler().dispatch_event(DisplayEvents.RESET_FOR_NEW_IMAGE)
             print('GUI_INFO: filename info:', self.filename)
             self.initialize_images(image)
@@ -514,7 +553,7 @@ class DisplayContainer(QFrame):
         self.cell_pixel = np.zeros((1, self.Ly, self.Lx), np.uint32)
         self.out_pixel = np.zeros((1, self.Ly, self.Lx), np.uint32)
         self.update_plot()
-        self.filename = []
+        self.filename = None
         self.recompute_masks = False
 
     def initialize_images(self, image):
@@ -576,7 +615,6 @@ class DisplayContainer(QFrame):
 
         self.Ly, self.Lx = self.stack.shape[1:3]
         self.layerz = 255 * np.ones((self.Ly, self.Lx, 4), 'uint8')
-        print(self.layerz.shape)
         # maybe we need to compute saturation
         if EventHandler().auto_adjust:
             self.compute_saturation()
