@@ -8,6 +8,8 @@ from segmentation_screen import Models
 class EventHandler(QtCore.QObject):
     def __init__(self):
         super().__init__()
+        self.gpu = False
+        self.protein_signal_layer = 0
         self._events = {}
         self.image_mode = "IMAGE_SELECTED"
         self.masks_on = True
@@ -18,6 +20,7 @@ class EventHandler(QtCore.QObject):
         self.current_model: Models = Models.CYTO2
         self.first_channel: Channels = Channels.GRAY
         self.second_channel: Channels = Channels.NONE
+        self.pages = 0
 
         self.flow_threshold = 0.0
         self.cellprob_threshold = 0.4

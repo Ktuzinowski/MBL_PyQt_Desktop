@@ -12,6 +12,8 @@ class ParametersContainer(QFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
 
+        self.proteinSignalDropdown_QComboBox: QComboBox = None
+
         # Timer to load in components before hooking up the corresponding buttons
         self.image_QRadioButton: QRadioButton = None
         self.gradXY_QRadioButton: QRadioButton = None
@@ -46,6 +48,12 @@ class ParametersContainer(QFrame):
         QTimer.singleShot(50, self.setup_ui_elements)
 
     def setup_ui_elements(self):
+
+        self.proteinSignalDropdown_QComboBox = self.findChild(QComboBox, "proteinSignalDropdown")
+        self.proteinSignalDropdown_QComboBox.addItem("Layer 1")
+        if self.proteinSignalDropdown_QComboBox is None:
+            print('GUI_INFO: Failed to get the proteinSignalDropdown_QComboBox')
+
         self.image_QRadioButton = self.findChild(QRadioButton, "image_button")
         if self.image_QRadioButton is None:
             print('GUI_INFO: Failed to get the image_QRadioButton')
@@ -125,6 +133,7 @@ class ParametersContainer(QFrame):
         self.imageSaturationSlider_QRangeSlider.setTickPosition(QSlider.TicksRight)
         self.setup_events_for_buttons()
 
+        self.proteinSignalDropdown_QComboBox.currentIndexChanged.connect(self.update_value_for_protein_signal_layer)
         self.model_QComboBox.currentIndexChanged.connect(self.update_value_for_current_model)
         self.firstChannel_QComboBox.currentIndexChanged.connect(self.update_value_for_first_channel)
         self.secondChannel_QComboBox.currentIndexChanged.connect(self.update_value_for_second_channel)
@@ -135,6 +144,7 @@ class ParametersContainer(QFrame):
         self.maximumCellDiameterValue_QDoubleSpinBox.valueChanged.connect(self.update_maximum_cell_diameter)
 
         # Events from DisplayContainer
+        EventHandler().add_event_listener(DisplayEvents.PROTEIN_SIGNAL_DROPDOWN_UPDATE, self.update_dropdown_values_for_protein_signal_layer)
         EventHandler().add_event_listener(DisplayEvents.AUTO_ADJUST_SATURATION_SLIDER,
                                           self.adjust_max_min_values_for_slider)
         EventHandler().add_event_listener(DisplayEvents.CALIBRATED_FOR_CELL_DIAMETER, self.update_cell_diameter)
@@ -198,6 +208,15 @@ class ParametersContainer(QFrame):
     def handle_event_for_toggled_outlines(self):
         EventHandler().outlines_on = self.outlinesOnCheck_QCheckBox.isChecked()
         EventHandler().dispatch_event(ParameterEvents.OUTLINES_ON_TOGGLED)
+
+    def update_value_for_protein_signal_layer(self):
+        EventHandler().protein_signal_layer = self.proteinSignalDropdown_QComboBox.currentIndex()
+        EventHandler().dispatch_event(ParameterEvents.UPDATE_PROTEIN_SIGNAL_LAYER)
+    
+    def update_dropdown_values_for_protein_signal_layer(self):
+        self.proteinSignalDropdown_QComboBox.setMaxCount(EventHandler().pages)
+        for i in range(2, EventHandler().pages+1):
+            self.proteinSignalDropdown_QComboBox.addItem("Layer " + str(i))
 
     def update_for_cellprob_change(self):
         EventHandler().cellprob_threshold = self.cellprobThresholdValue_QDoubleSpinBox.value()
